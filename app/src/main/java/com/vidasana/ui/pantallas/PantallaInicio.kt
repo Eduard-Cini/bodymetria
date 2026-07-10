@@ -109,7 +109,7 @@ fun PantallaInicio(nav: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Vida Sana — hoy") },
+                title = { Text("Bodymetria — hoy") },
                 actions = {
                     IconButton(onClick = { nav.navigate("config") }) {
                         Icon(Icons.Default.Settings, contentDescription = "Configuración")

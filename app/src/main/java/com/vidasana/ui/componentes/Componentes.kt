@@ -15,7 +15,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +28,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -170,6 +177,43 @@ fun SelectorNivel(
             valueRange = 1f..maximo.toFloat(),
             steps = maximo - 2,
         )
+    }
+}
+
+/**
+ * Campo de texto libre con menú de sugerencias: se puede escribir cualquier
+ * valor o elegir uno de la lista (filtrada por lo escrito).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CampoConSugerencias(
+    valor: String,
+    onCambio: (String) -> Unit,
+    etiqueta: String,
+    sugerencias: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    var abierto by remember { mutableStateOf(false) }
+    val filtradas = if (valor.isBlank()) sugerencias
+    else sugerencias.filter { it.contains(valor, ignoreCase = true) && !it.equals(valor, ignoreCase = true) }
+
+    ExposedDropdownMenuBox(expanded = abierto && filtradas.isNotEmpty(), onExpandedChange = { abierto = it }) {
+        OutlinedTextField(
+            value = valor,
+            onValueChange = { onCambio(it); abierto = true },
+            label = { Text(etiqueta) },
+            singleLine = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = abierto) },
+            modifier = modifier.menuAnchor(),
+        )
+        ExposedDropdownMenu(
+            expanded = abierto && filtradas.isNotEmpty(),
+            onDismissRequest = { abierto = false },
+        ) {
+            filtradas.forEach { s ->
+                DropdownMenuItem(text = { Text(s) }, onClick = { onCambio(s); abierto = false })
+            }
+        }
     }
 }
 

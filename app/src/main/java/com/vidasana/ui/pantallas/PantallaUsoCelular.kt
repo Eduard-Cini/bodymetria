@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.UsoApp
+import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.FilaHistorial
 import com.vidasana.ui.componentes.GraficaBarras
@@ -32,6 +33,12 @@ import com.vidasana.ui.componentes.TituloApartado
 import com.vidasana.ui.componentes.hoyIso
 import com.vidasana.ui.componentes.puntosDesde
 import kotlinx.coroutines.launch
+
+private val APPS_COMUNES = listOf(
+    "YouTube", "WhatsApp", "Facebook", "Instagram", "TikTok", "X (Twitter)",
+    "Telegram", "Messenger", "Chrome", "Gmail", "Spotify", "Netflix",
+    "Reddit", "Discord", "Juegos",
+)
 
 /** Sección 9: tiempo de uso del celular desglosado por aplicación. */
 @Composable
@@ -48,6 +55,11 @@ fun PantallaUsoCelular(nav: NavHostController) {
     val totales by remember { db.usoApps().totalesPorDia() }.collectAsState(initial = emptyList())
     val puntos = puntosDesde(totales.map { it.fecha to it.minutos.toFloat() })
 
+    // Sugerencias: apps ya registradas antes + las comunes.
+    var usadas by remember { mutableStateOf(listOf<String>()) }
+    LaunchedEffect(totales) { usadas = db.usoApps().appsUsadas() }
+    val sugerencias = (usadas + APPS_COMUNES).distinct()
+
     MarcoPantalla("Uso del celular", nav) {
         SelectorFecha(fecha) { fecha = it }
 
@@ -55,11 +67,11 @@ fun PantallaUsoCelular(nav: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedTextField(
-                value = app,
-                onValueChange = { app = it },
-                label = { Text("Aplicación") },
-                singleLine = true,
+            CampoConSugerencias(
+                valor = app,
+                onCambio = { app = it },
+                etiqueta = "Aplicación",
+                sugerencias = sugerencias,
                 modifier = Modifier.weight(1.4f),
             )
             CampoNumero(minutos, { minutos = it }, "Minutos", entero = true, modifier = Modifier.weight(1f))

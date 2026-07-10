@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "VidaSana"
+rootProject.name = "Bodymetria"
 include(":app")

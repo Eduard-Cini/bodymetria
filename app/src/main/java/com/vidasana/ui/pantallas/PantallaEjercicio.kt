@@ -11,10 +11,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -38,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.Sesion
+import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.GraficaBarras
 import com.vidasana.ui.componentes.MarcoPantalla
@@ -55,6 +53,17 @@ private val DISCIPLINAS = listOf(
     "Tenis de mesa", "Fútbol", "Natación", "Bici", "Caminata", "Senderismo", "Ultimate",
 )
 
+/** Disciplinas de fuerza: muestran el desglose de ejercicios → series. */
+private val DISCIPLINAS_FUERZA = setOf("gym", "calistenia")
+
+private val EJERCICIOS = listOf(
+    "Sentadilla", "Peso muerto", "Desplantes", "Hip thrust", "Abducciones",
+    "Elevación de gemelos", "Curl femoral", "Curl nórdico", "Dominadas", "Fondos",
+    "Lagartijas", "Lagartijas en pino asistido", "Front lever raises",
+    "Curl de bíceps", "Press cubano", "Elevaciones laterales",
+    "Press banca", "Press militar", "Remo con barra", "Face pull", "Plancha",
+)
+
 private class SerieEditable {
     var reps by mutableStateOf("")
     var peso by mutableStateOf("")
@@ -66,7 +75,6 @@ private class EjercicioEditable {
 }
 
 /** Sección 2: sesiones de ejercicio con disciplina, RPE y desglose de series. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaEjercicio(nav: NavHostController) {
     val contexto = LocalContext.current
@@ -81,6 +89,11 @@ fun PantallaEjercicio(nav: NavHostController) {
     var notas by remember { mutableStateOf("") }
     val ejercicios = remember { mutableStateListOf<EjercicioEditable>() }
 
+    val esFuerza = disciplina.trim().lowercase() in DISCIPLINAS_FUERZA
+    LaunchedEffect(esFuerza) {
+        if (esFuerza && ejercicios.isEmpty()) ejercicios.add(EjercicioEditable())
+    }
+
     val sesiones by remember { db.ejercicio().sesionesCompletas() }.collectAsState(initial = emptyList())
     val kcalPorDia = sesiones
         .groupBy { it.sesion.fecha }
@@ -90,22 +103,13 @@ fun PantallaEjercicio(nav: NavHostController) {
     MarcoPantalla("Ejercicio", nav) {
         SelectorFecha(fecha) { fecha = it }
 
-        var disciplinaAbierta by remember { mutableStateOf(false) }
-        ExposedDropdownMenuBox(expanded = disciplinaAbierta, onExpandedChange = { disciplinaAbierta = it }) {
-            OutlinedTextField(
-                value = disciplina,
-                onValueChange = { disciplina = it },
-                label = { Text("Disciplina") },
-                singleLine = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = disciplinaAbierta) },
-                modifier = Modifier.fillMaxWidth().menuAnchor(),
-            )
-            ExposedDropdownMenu(expanded = disciplinaAbierta, onDismissRequest = { disciplinaAbierta = false }) {
-                DISCIPLINAS.forEach { d ->
-                    DropdownMenuItem(text = { Text(d) }, onClick = { disciplina = d; disciplinaAbierta = false })
-                }
-            }
-        }
+        CampoConSugerencias(
+            valor = disciplina,
+            onCambio = { disciplina = it },
+            etiqueta = "Disciplina",
+            sugerencias = DISCIPLINAS,
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CampoNumero(duracion, { duracion = it }, "Duración", "min", entero = true, modifier = Modifier.weight(1f))
@@ -119,45 +123,47 @@ fun PantallaEjercicio(nav: NavHostController) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        TituloApartado("Ejercicios y series (opcional)")
-        ejercicios.forEachIndexed { i, ejercicio ->
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        OutlinedTextField(
-                            value = ejercicio.nombre,
-                            onValueChange = { ejercicio.nombre = it },
-                            label = { Text("Ejercicio ${i + 1}") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                        )
-                        IconButton(onClick = { ejercicios.removeAt(i) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Quitar ejercicio")
-                        }
-                    }
-                    ejercicio.series.forEachIndexed { j, serie ->
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("Serie ${j + 1}", style = MaterialTheme.typography.bodyMedium)
-                            CampoNumero(serie.reps, { serie.reps = it }, "Repes", entero = true, modifier = Modifier.weight(1f))
-                            CampoNumero(serie.peso, { serie.peso = it }, "Peso", "kg", modifier = Modifier.weight(1f))
-                            IconButton(onClick = { ejercicio.series.removeAt(j) }) {
-                                Icon(Icons.Default.Close, contentDescription = "Quitar serie")
+        if (esFuerza) {
+            TituloApartado("Ejercicios y series")
+            ejercicios.forEachIndexed { i, ejercicio ->
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            CampoConSugerencias(
+                                valor = ejercicio.nombre,
+                                onCambio = { ejercicio.nombre = it },
+                                etiqueta = "Ejercicio ${i + 1}",
+                                sugerencias = EJERCICIOS,
+                                modifier = Modifier.weight(1f),
+                            )
+                            IconButton(onClick = { ejercicios.removeAt(i) }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Quitar ejercicio")
                             }
                         }
-                    }
-                    OutlinedButton(onClick = { ejercicio.series.add(SerieEditable()) }) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Text("Serie")
+                        ejercicio.series.forEachIndexed { j, serie ->
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text("Serie ${j + 1}", style = MaterialTheme.typography.bodyMedium)
+                                CampoNumero(serie.reps, { serie.reps = it }, "Repes", entero = true, modifier = Modifier.weight(1f))
+                                CampoNumero(serie.peso, { serie.peso = it }, "Peso", "kg", modifier = Modifier.weight(1f))
+                                IconButton(onClick = { ejercicio.series.removeAt(j) }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Quitar serie")
+                                }
+                            }
+                        }
+                        OutlinedButton(onClick = { ejercicio.series.add(SerieEditable()) }) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Text("Serie")
+                        }
                     }
                 }
             }
-        }
-        OutlinedButton(onClick = { ejercicios.add(EjercicioEditable()) }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text("Añadir ejercicio")
+            OutlinedButton(onClick = { ejercicios.add(EjercicioEditable()) }, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text("Añadir ejercicio")
+            }
         }
 
         Button(
