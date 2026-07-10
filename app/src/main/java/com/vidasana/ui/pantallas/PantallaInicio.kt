@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -154,25 +153,17 @@ fun PantallaInicio(nav: NavHostController) {
         ) {
             items(secciones, key = { it.ruta }) { seccion ->
                 val registrado = resumen(seccion.ruta) != "—"
-                // La tarjeta registrada cambia de fondo completo (visible incluso
-                // cuando Material You genera una paleta gris).
-                val colores = if (registrado) {
-                    CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                } else {
-                    CardDefaults.cardColors()
-                }
-                val tinta = if (registrado) MaterialTheme.colorScheme.onPrimaryContainer
-                else MaterialTheme.colorScheme.onSurfaceVariant
+                // Solo el icono cambia de color cuando hay dato de hoy (más sobrio).
                 Card(
                     onClick = { nav.navigate(seccion.ruta) },
-                    colors = colores,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Icon(
                             seccion.icono,
                             contentDescription = null,
-                            tint = if (registrado) MaterialTheme.colorScheme.primary else tinta,
+                            tint = if (registrado) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
                             seccion.nombre,
@@ -183,7 +174,7 @@ fun PantallaInicio(nav: NavHostController) {
                         Text(
                             resumen(seccion.ruta),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = tinta,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
