@@ -14,6 +14,17 @@ private val MIGRACION_1_2 = object : Migration(1, 2) {
     }
 }
 
+/** v3: tabla de métricas médicas definidas por el usuario. */
+private val MIGRACION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS metricas_medicas (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "nombre TEXT NOT NULL, tipo TEXT NOT NULL, unidad TEXT NOT NULL DEFAULT '')",
+        )
+    }
+}
+
 @Database(
     entities = [
         RegistroMacros::class,
@@ -24,8 +35,9 @@ private val MIGRACION_1_2 = object : Migration(1, 2) {
         RegistroSueno::class,
         ValorDiario::class,
         UsoApp::class,
+        MetricaMedica::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class BaseDatos : RoomDatabase() {
@@ -35,6 +47,7 @@ abstract class BaseDatos : RoomDatabase() {
     abstract fun sueno(): SuenoDao
     abstract fun diario(): DiarioDao
     abstract fun usoApps(): UsoAppDao
+    abstract fun medica(): MedicaDao
 
     companion object {
         @Volatile private var instancia: BaseDatos? = null
@@ -45,7 +58,7 @@ abstract class BaseDatos : RoomDatabase() {
                     context.applicationContext,
                     BaseDatos::class.java,
                     "vidasana.db",
-                ).addMigrations(MIGRACION_1_2).build().also { instancia = it }
+                ).addMigrations(MIGRACION_1_2, MIGRACION_2_3).build().also { instancia = it }
             }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
+import com.vidasana.datos.TotalApp
 import com.vidasana.datos.UsoApp
 import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
@@ -32,6 +33,7 @@ import com.vidasana.ui.componentes.SelectorFecha
 import com.vidasana.ui.componentes.TituloApartado
 import com.vidasana.ui.componentes.hoyIso
 import com.vidasana.ui.componentes.puntosDesde
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 private val APPS_COMUNES = listOf(
@@ -57,7 +59,11 @@ fun PantallaUsoCelular(nav: NavHostController) {
 
     // Sugerencias: apps ya registradas antes + las comunes.
     var usadas by remember { mutableStateOf(listOf<String>()) }
-    LaunchedEffect(totales) { usadas = db.usoApps().appsUsadas() }
+    var top5 by remember { mutableStateOf(listOf<TotalApp>()) }
+    LaunchedEffect(totales) {
+        usadas = db.usoApps().appsUsadas()
+        top5 = db.usoApps().top5(LocalDate.now().minusDays(29).toString())
+    }
     val sugerencias = (usadas + APPS_COMUNES).distinct()
 
     MarcoPantalla("Uso del celular", nav) {
@@ -100,6 +106,17 @@ fun PantallaUsoCelular(nav: NavHostController) {
                     titulo = u.app,
                     subtitulo = "${u.minutos} min",
                     onBorrar = { ambito.launch { db.usoApps().borrar(u) } },
+                )
+            }
+        }
+
+        if (top5.isNotEmpty()) {
+            TituloApartado("Top 5 apps (últimos 30 días)")
+            val totalTop = top5.sumOf { it.minutos }.coerceAtLeast(1)
+            top5.forEachIndexed { i, t ->
+                Text(
+                    "${i + 1}. ${t.app} — ${t.minutos} min (${t.minutos * 100 / totalTop}%)",
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }

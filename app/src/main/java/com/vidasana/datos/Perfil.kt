@@ -21,6 +21,8 @@ data class Perfil(
     val estaturaCm: Int = 0,
     val objetivos: Set<String> = emptySet(),
     val configurado: Boolean = false,
+    /** Activa la sección Doctor (métricas médicas personalizadas). */
+    val seccionMedica: Boolean = false,
 )
 
 object Objetivos {
@@ -41,6 +43,7 @@ private val CLAVE_SEXO = stringPreferencesKey("sexo")
 private val CLAVE_ESTATURA = intPreferencesKey("estaturaCm")
 private val CLAVE_OBJETIVOS = stringSetPreferencesKey("objetivos")
 private val CLAVE_CONFIGURADO = booleanPreferencesKey("configurado")
+private val CLAVE_MEDICA = booleanPreferencesKey("seccionMedica")
 
 fun flujoPerfil(context: Context): Flow<Perfil> =
     context.datosPerfil.data.map { p ->
@@ -50,6 +53,7 @@ fun flujoPerfil(context: Context): Flow<Perfil> =
             estaturaCm = p[CLAVE_ESTATURA] ?: 0,
             objetivos = p[CLAVE_OBJETIVOS] ?: emptySet(),
             configurado = p[CLAVE_CONFIGURADO] ?: false,
+            seccionMedica = p[CLAVE_MEDICA] ?: false,
         )
     }
 
@@ -60,5 +64,6 @@ suspend fun guardarPerfil(context: Context, perfil: Perfil) {
         p[CLAVE_ESTATURA] = perfil.estaturaCm
         p[CLAVE_OBJETIVOS] = perfil.objetivos
         p[CLAVE_CONFIGURADO] = true
+        p[CLAVE_MEDICA] = perfil.seccionMedica
     }
 }

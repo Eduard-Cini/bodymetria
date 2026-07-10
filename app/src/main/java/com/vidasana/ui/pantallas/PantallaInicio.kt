@@ -12,7 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.PhoneAndroid
@@ -41,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
+import com.vidasana.datos.PREFIJO_MEDICA
+import com.vidasana.datos.PREFIJO_MICRO
 import com.vidasana.datos.TipoDiario
 import com.vidasana.datos.flujoPerfil
 import com.vidasana.ui.componentes.formatear
@@ -55,6 +60,7 @@ private data class Seccion(
 
 private val SECCIONES = listOf(
     Seccion("macros", "Macros", Icons.Default.Restaurant),
+    Seccion("micros", "Micros", Icons.Default.Eco),
     Seccion("ejercicio", "Ejercicio", Icons.Default.FitnessCenter),
     Seccion("composicion", "Composición", Icons.Default.MonitorWeight),
     Seccion("sueno", "Sueño", Icons.Default.Bedtime),
@@ -67,11 +73,12 @@ private val SECCIONES = listOf(
 )
 
 private val SECCION_REGLA = Seccion("diario/${TipoDiario.REGLA}", "Ciclo", Icons.Default.Bloodtype)
+private val SECCION_DOCTOR = Seccion("doctor", "Doctor", Icons.Default.MedicalServices)
 
 /** Cada objetivo empuja sus secciones hacia arriba en la portada. */
 private val PESOS_OBJETIVO = mapOf(
     "Longevidad" to mapOf(
-        "sueno" to 3, "ejercicio" to 2, "macros" to 2, "composicion" to 1,
+        "sueno" to 3, "ejercicio" to 2, "macros" to 2, "micros" to 1, "composicion" to 1,
         "diario/${TipoDiario.ESTRES}" to 2, "diario/${TipoDiario.AGUA}" to 1,
         "diario/${TipoDiario.MEDITACION}" to 1,
     ),
@@ -97,9 +104,12 @@ fun PantallaInicio(nav: NavHostController) {
         if (perfil?.configurado == false) nav.navigate("config")
     }
 
-    // Secciones visibles (ciclo solo con perfil femenino), ordenadas según objetivos.
+    // Secciones visibles (ciclo solo con perfil femenino; doctor si está
+    // activada en configuración), ordenadas según objetivos.
     val secciones = remember(perfil) {
-        val base = if (perfil?.sexo == "femenino") SECCIONES + SECCION_REGLA else SECCIONES
+        var base = SECCIONES
+        if (perfil?.sexo == "femenino") base = base + SECCION_REGLA
+        if (perfil?.seccionMedica == true) base = base + SECCION_DOCTOR
         val puntos = mutableMapOf<String, Int>()
         (perfil?.objetivos ?: emptySet()).forEach { objetivo ->
             PESOS_OBJETIVO[objetivo]?.forEach { (ruta, p) -> puntos[ruta] = (puntos[ruta] ?: 0) + p }
@@ -135,6 +145,10 @@ fun PantallaInicio(nav: NavHostController) {
         "usoCelular" -> if (celularHoy > 0) "$celularHoy min" else "—"
         "diario/${TipoDiario.ANIMO}" -> valorDiario(TipoDiario.ANIMO)?.let { "${it.toInt()}/10" } ?: "—"
         "diario/${TipoDiario.REGLA}" -> valorDiario(TipoDiario.REGLA)?.let { if (it > 0) "Sí" else "No" } ?: "—"
+        "micros" -> diarioHoy.count { it.tipo.startsWith(PREFIJO_MICRO) }
+            .let { if (it > 0) "$it registrados" else "—" }
+        "doctor" -> diarioHoy.count { it.tipo.startsWith(PREFIJO_MEDICA) }
+            .let { if (it > 0) "$it hoy" else "—" }
         else -> "—"
     }
 
@@ -143,6 +157,9 @@ fun PantallaInicio(nav: NavHostController) {
             TopAppBar(
                 title = { Text("Bodymetria — hoy") },
                 actions = {
+                    IconButton(onClick = { nav.navigate("consejos") }) {
+                        Icon(Icons.Default.Lightbulb, contentDescription = "Consejos")
+                    }
                     IconButton(onClick = { nav.navigate("config") }) {
                         Icon(Icons.Default.Settings, contentDescription = "Configuración")
                     }

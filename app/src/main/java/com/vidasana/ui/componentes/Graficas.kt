@@ -37,30 +37,57 @@ fun puntosDesde(pares: List<Pair<String, Float>>): List<PuntoFecha> =
 fun formatear(v: Float, decimales: Int): String =
     String.format(Locale.US, "%.${decimales}f", v).removeSuffix(".0")
 
-/** Media de los valores en la ventana [desde, hasta] (inclusive). */
-private fun media(datos: List<PuntoFecha>, desde: LocalDate, hasta: LocalDate): Float? {
-    val v = datos.filter { it.fecha in desde..hasta }.map { it.valor }
-    return if (v.isEmpty()) null else v.sum() / v.size
+/** Valores dentro de la ventana [desde, hasta] (inclusive). */
+private fun ventana(datos: List<PuntoFecha>, desde: LocalDate, hasta: LocalDate): List<Float> =
+    datos.filter { it.fecha in desde..hasta }.map { it.valor }
+
+private fun media(v: List<Float>): Float? = if (v.isEmpty()) null else v.sum() / v.size
+
+/** Varianza poblacional (σ²); necesita al menos 2 valores. */
+private fun varianza(v: List<Float>): Float? {
+    val m = media(v) ?: return null
+    if (v.size < 2) return null
+    return v.sumOf { ((it - m) * (it - m)).toDouble() }.toFloat() / v.size
 }
 
-/** Tiles con media de 7 días, media de 30 y tendencia (media 7d vs 7d previos). */
+/**
+ * Reporte estadístico: media de 7 y 30 días, desviación estándar y varianza
+ * (ventana de 30 días) y tendencia (media 7d vs los 7d previos).
+ */
 @Composable
 fun PanelEstadisticas(datos: List<PuntoFecha>, unidad: String, decimales: Int = 1) {
     if (datos.isEmpty()) return
     val hoy = LocalDate.now()
-    val media7 = media(datos, hoy.minusDays(6), hoy)
-    val media30 = media(datos, hoy.minusDays(29), hoy)
-    val media7Previa = media(datos, hoy.minusDays(13), hoy.minusDays(7))
+    val v30 = ventana(datos, hoy.minusDays(29), hoy)
+    val media7 = media(ventana(datos, hoy.minusDays(6), hoy))
+    val media30 = media(v30)
+    val media7Previa = media(ventana(datos, hoy.minusDays(13), hoy.minusDays(7)))
     val tendencia = if (media7 != null && media7Previa != null) media7 - media7Previa else null
+    val varianza30 = varianza(v30)
+    val desviacion = varianza30?.let { kotlin.math.sqrt(it) }
 
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Tile("Media 7 días", media7?.let { "${formatear(it, decimales)} $unidad" } ?: "—", Modifier.weight(1f))
-        Tile("Media 30 días", media30?.let { "${formatear(it, decimales)} $unidad" } ?: "—", Modifier.weight(1f))
-        Tile(
-            "Tendencia",
-            tendencia?.let { (if (it >= 0) "▲ +" else "▼ ") + formatear(it, decimales) } ?: "—",
-            Modifier.weight(1f),
-        )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            Tile("Media 7 días", media7?.let { "${formatear(it, decimales)} $unidad" } ?: "—", Modifier.weight(1f))
+            Tile("Media 30 días", media30?.let { "${formatear(it, decimales)} $unidad" } ?: "—", Modifier.weight(1f))
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            Tile(
+                "Desv. estándar",
+                desviacion?.let { "±${formatear(it, maxOf(decimales, 1))}" } ?: "—",
+                Modifier.weight(1f),
+            )
+            Tile(
+                "Varianza",
+                varianza30?.let { formatear(it, maxOf(decimales, 1)) } ?: "—",
+                Modifier.weight(1f),
+            )
+            Tile(
+                "Tendencia",
+                tendencia?.let { (if (it >= 0) "▲ +" else "▼ ") + formatear(it, decimales) } ?: "—",
+                Modifier.weight(1f),
+            )
+        }
     }
 }
 

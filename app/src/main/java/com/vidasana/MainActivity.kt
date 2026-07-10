@@ -12,10 +12,13 @@ import androidx.navigation.compose.rememberNavController
 import com.vidasana.ui.TemaVidaSana
 import com.vidasana.ui.pantallas.PantallaComposicion
 import com.vidasana.ui.pantallas.PantallaConfig
+import com.vidasana.ui.pantallas.PantallaConsejos
 import com.vidasana.ui.pantallas.PantallaDiario
+import com.vidasana.ui.pantallas.PantallaDoctor
 import com.vidasana.ui.pantallas.PantallaEjercicio
 import com.vidasana.ui.pantallas.PantallaInicio
 import com.vidasana.ui.pantallas.PantallaMacros
+import com.vidasana.ui.pantallas.PantallaMicros
 import com.vidasana.ui.pantallas.PantallaSueno
 import com.vidasana.ui.pantallas.PantallaUsoCelular
 
@@ -42,6 +45,9 @@ fun Navegacion() {
         composable("composicion") { PantallaComposicion(nav) }
         composable("sueno") { PantallaSueno(nav) }
         composable("usoCelular") { PantallaUsoCelular(nav) }
+        composable("micros") { PantallaMicros(nav) }
+        composable("doctor") { PantallaDoctor(nav) }
+        composable("consejos") { PantallaConsejos(nav) }
         composable("diario/{tipo}") { entrada ->
             PantallaDiario(nav, entrada.arguments?.getString("tipo") ?: "")
         }

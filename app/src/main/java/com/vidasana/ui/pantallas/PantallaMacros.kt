@@ -1,9 +1,13 @@
 package com.vidasana.ui.pantallas
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.RegistroMacros
+import com.vidasana.datos.calcularMetas
+import com.vidasana.datos.flujoPerfil
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.FilaHistorial
 import com.vidasana.ui.componentes.GraficaBarras
@@ -32,6 +38,7 @@ import com.vidasana.ui.componentes.etiquetaFecha
 import com.vidasana.ui.componentes.formatear
 import com.vidasana.ui.componentes.hoyIso
 import com.vidasana.ui.componentes.puntosDesde
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 /** Sección 1: macros por día. */
@@ -60,8 +67,58 @@ fun PantallaMacros(nav: NavHostController) {
         (carbohidratos.toFloatOrNull() ?: 0f) * 4 +
         (grasas.toFloatOrNull() ?: 0f) * 9
 
+    // Meta de calorías y macros según el perfil, el último peso registrado y
+    // la media diaria REAL de gasto por ejercicio (últimos 7 días).
+    val perfil by remember { flujoPerfil(contexto) }.collectAsState(initial = null)
+    val composiciones by remember { db.composicion().todos() }.collectAsState(initial = emptyList())
+    val sesiones by remember { db.ejercicio().sesionesCompletas() }.collectAsState(initial = emptyList())
+    val hace7 = LocalDate.now().minusDays(6).toString()
+    val mediaEjercicio = sesiones
+        .filter { it.sesion.fecha >= hace7 }
+        .sumOf { it.sesion.gastoKcal } / 7f
+    val metas = perfil?.let { calcularMetas(it, composiciones.firstOrNull()?.pesoKg, mediaEjercicio) }
+
     MarcoPantalla("Macros", nav) {
         SelectorFecha(fecha) { fecha = it }
+
+        if (metas != null) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        "Tu meta — ${metas.objetivoRector}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        "${formatear(metas.kcal, 0)} kcal · P ${formatear(metas.proteinasG, 0)} g · " +
+                            "C ${formatear(metas.carbohidratosG, 0)} g · G ${formatear(metas.grasasG, 0)} g",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    LinearProgressIndicator(
+                        progress = { (kcal / metas.kcal).coerceIn(0f, 1f) },
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    )
+                    Text(
+                        "Llevas ${formatear(kcal, 0)} de ${formatear(metas.kcal, 0)} kcal este día",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Text(
+                        metas.nota,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+            }
+        } else {
+            Text(
+                "Registra tu peso en Composición y completa tu perfil para ver tu meta " +
+                    "de calorías y macros.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CampoNumero(proteinas, { proteinas = it }, "Proteína", "g", modifier = Modifier.weight(1f))

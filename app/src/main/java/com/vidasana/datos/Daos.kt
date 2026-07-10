@@ -108,7 +108,23 @@ interface UsoAppDao {
     @Query("SELECT fecha, SUM(minutos) AS minutos FROM uso_apps GROUP BY fecha ORDER BY fecha DESC")
     fun totalesPorDia(): Flow<List<TotalDia>>
     @Query("SELECT DISTINCT app FROM uso_apps ORDER BY app") suspend fun appsUsadas(): List<String>
+    @Query(
+        "SELECT app, SUM(minutos) AS minutos FROM uso_apps WHERE fecha >= :desde " +
+            "GROUP BY app ORDER BY minutos DESC LIMIT 5",
+    )
+    suspend fun top5(desde: String): List<TotalApp>
     @Query("SELECT * FROM uso_apps ORDER BY fecha") suspend fun exportar(): List<UsoApp>
 }
 
 data class TotalDia(val fecha: String, val minutos: Int)
+data class TotalApp(val app: String, val minutos: Int)
+
+@Dao
+interface MedicaDao {
+    @Insert suspend fun insertar(m: MetricaMedica): Long
+    @Query("DELETE FROM metricas_medicas WHERE id = :id") suspend fun borrar(id: Long)
+    @Query("SELECT * FROM metricas_medicas ORDER BY id") fun todas(): Flow<List<MetricaMedica>>
+    @Query("SELECT * FROM metricas_medicas ORDER BY id") suspend fun exportar(): List<MetricaMedica>
+    /** Al borrar una métrica se borran también sus registros diarios. */
+    @Query("DELETE FROM diario WHERE tipo = :tipo") suspend fun borrarRegistros(tipo: String)
+}

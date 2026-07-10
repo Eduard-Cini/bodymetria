@@ -128,3 +128,20 @@ data class UsoApp(
     val app: String,
     val minutos: Int,
 )
+
+// ── Sección médica (Doctor): métricas definidas por el usuario ───────
+/** Sus valores diarios viven en `diario` con tipo = "med.<id>". */
+@Serializable
+@Entity(tableName = "metricas_medicas")
+data class MetricaMedica(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val nombre: String,
+    val tipo: String, // uno de TipoMetrica
+    val unidad: String = "",
+)
+
+object TipoMetrica {
+    const val NUMERO = "numero"   // cantidad libre (p. ej. evacuaciones)
+    const val BOOL = "bool"       // sí/no (p. ej. pastilla tomada)
+    const val ESCALA = "escala"   // 1-10 (p. ej. molestia estomacal)
+}

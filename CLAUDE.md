@@ -22,8 +22,26 @@ visible es Bodymetria.
 9. `usoCelular` — minutos por app y por día (filas app+minutos; sugerencias
    comunes + ya usadas).
 
+Además (v1):
+- `micros` — metas RDA por sexo (Metas.kt: MICROS; sodio es tope) + registro del
+  total diario; los valores viven en `diario` como "micro.<clave>".
+- `doctor` — métricas médicas definidas por el usuario (tabla metricas_medicas,
+  v3; valores en `diario` como "med.<id>"); SOLO visible si se activa el switch
+  en Configuración (perfil.seccionMedica).
+- `consejos` — estático, papers reales resumidos como asociaciones; acceso por
+  el foco de la barra superior.
+- Metas (datos/Metas.kt): kcal/macros por Mifflin-St Jeor ×1.3 + media real de
+  gasto por ejercicio 7d; prioridad pérdida>ganancia>longevidad (longevidad =
+  déficit 8%, proteína 1.2 g/kg CON ÉNFASIS VEGETAL, nota de mucha verdura);
+  agua = 35 ml/kg. Tarjeta de meta en Macros; barra de progreso en Agua.
+- PanelEstadisticas: media 7/30 + desviación estándar + varianza (30d) + tendencia.
+- Uso celular: top 5 apps de 30 días (query top5).
+- Import JSON: validarRespaldo() (rangos/fechas/tamaños) + diálogo de vista
+  previa con resumenRespaldo() antes de aplicarRespaldo(); NUNCA aplicar sin
+  confirmar. El respaldo incluye métricas médicas (re-mapeo de ids "med.<id>").
+
 La portada ordena las tarjetas según los objetivos del perfil (PESOS_OBJETIVO en
-PantallaInicio.kt); tarjeta con dato de hoy = fondo primaryContainer.
+PantallaInicio.kt); tarjeta con dato de hoy = icono en color primario.
 
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto
