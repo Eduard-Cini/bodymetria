@@ -70,6 +70,11 @@ private val SECCION_REGLA = Seccion("diario/${TipoDiario.REGLA}", "Ciclo", Icons
 
 /** Cada objetivo empuja sus secciones hacia arriba en la portada. */
 private val PESOS_OBJETIVO = mapOf(
+    "Longevidad" to mapOf(
+        "sueno" to 3, "ejercicio" to 2, "macros" to 2, "composicion" to 1,
+        "diario/${TipoDiario.ESTRES}" to 2, "diario/${TipoDiario.AGUA}" to 1,
+        "diario/${TipoDiario.MEDITACION}" to 1,
+    ),
     "Ganancia de músculo" to mapOf("ejercicio" to 3, "macros" to 2, "composicion" to 2),
     "Pérdida de grasa" to mapOf("macros" to 3, "composicion" to 2, "ejercicio" to 2, "diario/${TipoDiario.AGUA}" to 1),
     "Escuela" to mapOf("diario/${TipoDiario.ESTRES}" to 2, "sueno" to 2, "usoCelular" to 1),

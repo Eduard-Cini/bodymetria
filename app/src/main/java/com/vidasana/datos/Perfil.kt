@@ -25,6 +25,7 @@ data class Perfil(
 
 object Objetivos {
     val TODOS = listOf(
+        "Longevidad",
         "Ganancia de músculo",
         "Pérdida de grasa",
         "Escuela",
