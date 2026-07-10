@@ -8,13 +8,13 @@
 
     <!-- Vapor -->
     <path
-        android:strokeColor="#FFFFFF"
+        android:strokeColor="#8A6D4F"
         android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:fillColor="#00000000"
         android:pathData="M46,28 q-4,5 0,9 q4,4 0,8" />
     <path
-        android:strokeColor="#FFFFFF"
+        android:strokeColor="#8A6D4F"
         android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:fillColor="#00000000"
