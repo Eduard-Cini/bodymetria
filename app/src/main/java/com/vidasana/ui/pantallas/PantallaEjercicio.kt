@@ -101,6 +101,11 @@ fun PantallaEjercicio(nav: NavHostController) {
         .map { (f, lista) -> f to lista.sumOf { it.sesion.gastoKcal }.toFloat() }
     val puntosKcal = puntosDesde(kcalPorDia)
 
+    // Catálogo + los ejercicios propios ya registrados (saltos, drive, protocolo japonés...).
+    var ejerciciosUsados by remember { mutableStateOf(listOf<String>()) }
+    LaunchedEffect(sesiones) { ejerciciosUsados = db.ejercicio().ejerciciosUsados() }
+    val sugerenciasEjercicio = (EJERCICIOS + ejerciciosUsados).distinct()
+
     MarcoPantalla("Ejercicio", nav) {
         SelectorFecha(fecha) { fecha = it }
 
@@ -124,8 +129,8 @@ fun PantallaEjercicio(nav: NavHostController) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        if (esFuerza) {
-            TituloApartado("Ejercicios y series")
+        TituloApartado(if (esFuerza) "Ejercicios y series" else "Ejercicios y series (opcional)")
+        run {
             ejercicios.forEachIndexed { i, ejercicio ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -134,7 +139,7 @@ fun PantallaEjercicio(nav: NavHostController) {
                                 valor = ejercicio.nombre,
                                 onCambio = { ejercicio.nombre = it },
                                 etiqueta = "Ejercicio ${i + 1}",
-                                sugerencias = EJERCICIOS,
+                                sugerencias = sugerenciasEjercicio,
                                 modifier = Modifier.weight(1f),
                             )
                             IconButton(onClick = { ejercicios.removeAt(i) }) {

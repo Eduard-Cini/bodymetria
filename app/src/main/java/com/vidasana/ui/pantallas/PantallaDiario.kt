@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.TipoDiario
 import com.vidasana.datos.ValorDiario
+import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.FilaHistorial
 import com.vidasana.ui.componentes.GraficaBarras
@@ -46,18 +47,24 @@ private data class ConfigDiario(
     val modo: ModoEntrada,
     val etiquetaCampo: String,
     val barras: Boolean,
+    /** Etiqueta del texto asociado; null = sin campo de texto. */
+    val etiquetaTexto: String? = null,
 )
 
 private fun configDe(tipo: String): ConfigDiario = when (tipo) {
     TipoDiario.ESTRES -> ConfigDiario("Estrés", "", ModoEntrada.NIVEL, "Nivel de estrés", barras = false)
     TipoDiario.AGUA -> ConfigDiario("Agua", "ml", ModoEntrada.NUMERO, "Agua bebida", barras = true)
-    TipoDiario.LECTURA -> ConfigDiario("Lectura", "min", ModoEntrada.NUMERO, "Minutos de lectura", barras = true)
+    TipoDiario.LECTURA -> ConfigDiario(
+        "Lectura", "min", ModoEntrada.NUMERO, "Minutos de lectura",
+        barras = true, etiquetaTexto = "Libro",
+    )
     TipoDiario.MEDITACION -> ConfigDiario("Meditación", "", ModoEntrada.BOOL, "¿Meditaste?", barras = true)
     TipoDiario.ANIMO -> ConfigDiario("Estado de ánimo", "", ModoEntrada.NIVEL, "Ánimo general", barras = false)
+    TipoDiario.REGLA -> ConfigDiario("Ciclo menstrual", "", ModoEntrada.BOOL, "¿Día de regla?", barras = true)
     else -> ConfigDiario(tipo, "", ModoEntrada.NUMERO, tipo, barras = false)
 }
 
-/** Pantalla común de las secciones de un solo valor por día (5-8 y 10). */
+/** Pantalla común de las secciones de un solo valor por día (5-8, 10 y ciclo). */
 @Composable
 fun PantallaDiario(nav: NavHostController, tipo: String) {
     val config = configDe(tipo)
@@ -69,6 +76,7 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
     var numero by remember { mutableStateOf("") }
     var nivel by remember { mutableIntStateOf(5) }
     var hecho by remember { mutableStateOf(false) }
+    var texto by remember { mutableStateOf("") }
 
     val existente by remember(fecha) { db.diario().porFecha(fecha, tipo) }
         .collectAsState(initial = null)
@@ -78,10 +86,20 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
             ModoEntrada.NIVEL -> nivel = existente?.valor?.toInt() ?: 5
             ModoEntrada.BOOL -> hecho = (existente?.valor ?: 0f) > 0f
         }
+        if (config.etiquetaTexto != null) {
+            // Si el día ya tiene registro, cargar su texto (el libro de ese día).
+            existente?.texto?.takeIf { it.isNotEmpty() }?.let { texto = it }
+        }
     }
 
     val historial by remember { db.diario().porTipo(tipo) }.collectAsState(initial = emptyList())
     val puntos = puntosDesde(historial.map { it.fecha to it.valor })
+
+    // Sugerencias del texto asociado (libros ya registrados).
+    var textosUsados by remember { mutableStateOf(listOf<String>()) }
+    LaunchedEffect(historial) {
+        if (config.etiquetaTexto != null) textosUsados = db.diario().textosUsados(tipo)
+    }
 
     MarcoPantalla(config.titulo, nav) {
         SelectorFecha(fecha) { fecha = it }
@@ -102,6 +120,16 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
             }
         }
 
+        if (config.etiquetaTexto != null) {
+            CampoConSugerencias(
+                valor = texto,
+                onCambio = { texto = it },
+                etiqueta = config.etiquetaTexto,
+                sugerencias = textosUsados,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
         Button(
             onClick = {
                 val valor = when (config.modo) {
@@ -109,19 +137,23 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
                     ModoEntrada.NIVEL -> nivel.toFloat()
                     ModoEntrada.BOOL -> if (hecho) 1f else 0f
                 }
-                ambito.launch { db.diario().guardar(ValorDiario(fecha, tipo, valor)) }
+                ambito.launch {
+                    db.diario().guardar(
+                        ValorDiario(fecha, tipo, valor, if (config.etiquetaTexto != null) texto.trim() else ""),
+                    )
+                }
             },
             enabled = config.modo != ModoEntrada.NUMERO || numero.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
         ) { Text("Guardar") }
 
-        if (tipo == TipoDiario.MEDITACION) {
+        if (config.modo == ModoEntrada.BOOL) {
             // Para sí/no la media no dice mucho: contar días.
             val hoy = LocalDate.now()
             val dias7 = puntos.count { it.fecha >= hoy.minusDays(6) && it.valor > 0 }
             val dias30 = puntos.count { it.fecha >= hoy.minusDays(29) && it.valor > 0 }
             Text(
-                "Meditaste $dias7 de los últimos 7 días y $dias30 de los últimos 30.",
+                "Sí en $dias7 de los últimos 7 días y en $dias30 de los últimos 30.",
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
@@ -142,9 +174,10 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
                     ModoEntrada.NIVEL -> "${registro.valor.toInt()} / 10"
                     ModoEntrada.BOOL -> if (registro.valor > 0) "Sí" else "No"
                 }
+                val sub = if (registro.texto.isNotEmpty()) "$valorTexto · ${registro.texto}" else valorTexto
                 FilaHistorial(
                     titulo = etiquetaFecha(registro.fecha),
-                    subtitulo = valorTexto,
+                    subtitulo = sub,
                     onBorrar = { ambito.launch { db.diario().borrar(registro.fecha, tipo) } },
                 )
             }

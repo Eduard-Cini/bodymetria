@@ -65,6 +65,7 @@ interface EjercicioDao {
     @Query("SELECT * FROM ejercicios") suspend fun exportarEjercicios(): List<Ejercicio>
     @Query("SELECT * FROM series") suspend fun exportarSeries(): List<Serie>
     @Query("SELECT DISTINCT disciplina FROM sesiones ORDER BY disciplina") suspend fun disciplinasUsadas(): List<String>
+    @Query("SELECT DISTINCT nombre FROM ejercicios ORDER BY nombre") suspend fun ejerciciosUsados(): List<String>
 }
 
 @Dao
@@ -94,6 +95,8 @@ interface DiarioDao {
     @Query("SELECT * FROM diario WHERE tipo = :tipo ORDER BY fecha DESC")
     fun porTipo(tipo: String): Flow<List<ValorDiario>>
     @Query("SELECT * FROM diario WHERE fecha = :fecha") fun delDia(fecha: String): Flow<List<ValorDiario>>
+    @Query("SELECT DISTINCT texto FROM diario WHERE tipo = :tipo AND texto != '' ORDER BY texto")
+    suspend fun textosUsados(tipo: String): List<String>
     @Query("SELECT * FROM diario ORDER BY fecha") suspend fun exportar(): List<ValorDiario>
 }
 

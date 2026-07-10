@@ -100,21 +100,24 @@ data class RegistroSueno(
         }
 }
 
-// ── Secciones 5-8 y 10: un valor por día y tipo ──────────────────────
+// ── Secciones 5-8 y 10 (+ ciclo): un valor por día y tipo ────────────
 @Serializable
 @Entity(tableName = "diario", primaryKeys = ["fecha", "tipo"])
 data class ValorDiario(
     val fecha: String,
     val tipo: String, // uno de TipoDiario
     val valor: Float,
+    /** Texto opcional asociado (p. ej. el libro en lectura). */
+    val texto: String = "",
 )
 
 object TipoDiario {
     const val ESTRES = "estres"        // escala 1-10
     const val AGUA = "agua"            // mililitros
-    const val LECTURA = "lectura"      // minutos
+    const val LECTURA = "lectura"      // minutos; texto = libro
     const val MEDITACION = "meditacion" // 0 = no, 1 = sí
     const val ANIMO = "animo"          // escala 1-10
+    const val REGLA = "regla"          // 0 = no, 1 = sí (solo perfil femenino)
 }
 
 // ── Sección 9: uso del celular por app ───────────────────────────────

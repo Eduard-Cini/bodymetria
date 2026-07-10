@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Mood
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,6 +67,19 @@ private val SECCIONES = listOf(
     Seccion("diario/${TipoDiario.ANIMO}", "Ánimo", Icons.Default.Mood),
 )
 
+private val SECCION_REGLA = Seccion("diario/${TipoDiario.REGLA}", "Ciclo", Icons.Default.Bloodtype)
+
+/** Cada objetivo empuja sus secciones hacia arriba en la portada. */
+private val PESOS_OBJETIVO = mapOf(
+    "Ganancia de músculo" to mapOf("ejercicio" to 3, "macros" to 2, "composicion" to 2),
+    "Pérdida de grasa" to mapOf("macros" to 3, "composicion" to 2, "ejercicio" to 2, "diario/${TipoDiario.AGUA}" to 1),
+    "Escuela" to mapOf("diario/${TipoDiario.ESTRES}" to 2, "sueno" to 2, "usoCelular" to 1),
+    "Trabajo" to mapOf("diario/${TipoDiario.ESTRES}" to 2, "sueno" to 2, "usoCelular" to 1),
+    "Relaciones personales" to mapOf("diario/${TipoDiario.ANIMO}" to 3),
+    "Introspección" to mapOf("diario/${TipoDiario.MEDITACION}" to 3, "diario/${TipoDiario.ANIMO}" to 2, "diario/${TipoDiario.ESTRES}" to 1),
+    "Lectura/aprendizaje" to mapOf("diario/${TipoDiario.LECTURA}" to 3, "usoCelular" to 1),
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaInicio(nav: NavHostController) {
@@ -76,6 +91,18 @@ fun PantallaInicio(nav: NavHostController) {
     val perfil by remember { flujoPerfil(contexto) }.collectAsState(initial = null)
     LaunchedEffect(perfil) {
         if (perfil?.configurado == false) nav.navigate("config")
+    }
+
+    // Secciones visibles (ciclo solo con perfil femenino), ordenadas según objetivos.
+    val secciones = remember(perfil) {
+        val base = if (perfil?.sexo == "femenino") SECCIONES + SECCION_REGLA else SECCIONES
+        val puntos = mutableMapOf<String, Int>()
+        (perfil?.objetivos ?: emptySet()).forEach { objetivo ->
+            PESOS_OBJETIVO[objetivo]?.forEach { (ruta, p) -> puntos[ruta] = (puntos[ruta] ?: 0) + p }
+        }
+        base.withIndex()
+            .sortedWith(compareByDescending<IndexedValue<Seccion>> { puntos[it.value.ruta] ?: 0 }.thenBy { it.index })
+            .map { it.value }
     }
 
     // Resumen de hoy por sección (texto corto o "—")
@@ -103,6 +130,7 @@ fun PantallaInicio(nav: NavHostController) {
         "diario/${TipoDiario.MEDITACION}" -> valorDiario(TipoDiario.MEDITACION)?.let { if (it > 0) "Sí" else "No" } ?: "—"
         "usoCelular" -> if (celularHoy > 0) "$celularHoy min" else "—"
         "diario/${TipoDiario.ANIMO}" -> valorDiario(TipoDiario.ANIMO)?.let { "${it.toInt()}/10" } ?: "—"
+        "diario/${TipoDiario.REGLA}" -> valorDiario(TipoDiario.REGLA)?.let { if (it > 0) "Sí" else "No" } ?: "—"
         else -> "—"
     }
 
@@ -124,18 +152,27 @@ fun PantallaInicio(nav: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(SECCIONES) { seccion ->
+            items(secciones, key = { it.ruta }) { seccion ->
                 val registrado = resumen(seccion.ruta) != "—"
+                // La tarjeta registrada cambia de fondo completo (visible incluso
+                // cuando Material You genera una paleta gris).
+                val colores = if (registrado) {
+                    CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                } else {
+                    CardDefaults.cardColors()
+                }
+                val tinta = if (registrado) MaterialTheme.colorScheme.onPrimaryContainer
+                else MaterialTheme.colorScheme.onSurfaceVariant
                 Card(
                     onClick = { nav.navigate(seccion.ruta) },
+                    colors = colores,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Icon(
                             seccion.icono,
                             contentDescription = null,
-                            tint = if (registrado) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (registrado) MaterialTheme.colorScheme.primary else tinta,
                         )
                         Text(
                             seccion.nombre,
@@ -146,7 +183,7 @@ fun PantallaInicio(nav: NavHostController) {
                         Text(
                             resumen(seccion.ruta),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = tinta,
                         )
                     }
                 }
