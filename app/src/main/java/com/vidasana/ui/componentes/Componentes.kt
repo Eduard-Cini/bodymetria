@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -217,7 +219,35 @@ fun CampoConSugerencias(
     }
 }
 
-/** Fila de historial con botón de borrar. */
+/** Botón de borrar que pide confirmación antes de ejecutar. */
+@Composable
+fun BotonBorrar(descripcion: String, onConfirmar: () -> Unit) {
+    var confirmando by remember { mutableStateOf(false) }
+    IconButton(onClick = { confirmando = true }) {
+        Icon(
+            Icons.Default.Delete,
+            contentDescription = "Borrar",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+    if (confirmando) {
+        AlertDialog(
+            onDismissRequest = { confirmando = false },
+            title = { Text("¿Borrar este registro?") },
+            text = { Text("$descripcion\n\nEsta acción no se puede deshacer.") },
+            confirmButton = {
+                TextButton(onClick = { confirmando = false; onConfirmar() }) {
+                    Text("Borrar", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmando = false }) { Text("Cancelar") }
+            },
+        )
+    }
+}
+
+/** Fila de historial con botón de borrar (con confirmación). */
 @Composable
 fun FilaHistorial(
     titulo: String,
@@ -239,13 +269,7 @@ fun FilaHistorial(
                     )
                 }
             }
-            IconButton(onClick = onBorrar) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Borrar",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            BotonBorrar(descripcion = listOf(titulo, subtitulo).filter { it.isNotEmpty() }.joinToString(" · "), onConfirmar = onBorrar)
         }
     }
 }

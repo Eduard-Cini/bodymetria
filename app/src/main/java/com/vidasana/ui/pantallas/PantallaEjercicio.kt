@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.Sesion
+import com.vidasana.ui.componentes.BotonBorrar
 import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.GraficaBarras
@@ -245,13 +246,10 @@ fun PantallaEjercicio(nav: NavHostController) {
                                 )
                             }
                         }
-                        IconButton(onClick = { ambito.launch { db.ejercicio().borrarSesion(s.sesion.id) } }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Borrar sesión",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        BotonBorrar(
+                            descripcion = "Sesión de ${s.sesion.disciplina} del ${fechaCorta(s.sesion.fecha)} (${s.sesion.duracionMin} min)",
+                            onConfirmar = { ambito.launch { db.ejercicio().borrarSesion(s.sesion.id) } },
+                        )
                     }
                 }
             }
