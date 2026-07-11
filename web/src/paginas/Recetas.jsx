@@ -1,15 +1,11 @@
 import { useMemo, useState } from 'react'
-import { RECETAS } from '../datos/recetas.js'
+import { ENSALADA, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
+import { NUTRIENTES, MICROS_APP, rangoDe } from '../datos/alimentos.js'
+import { calcularMetas, cargarPerfil } from '../datos/perfil.js'
+import MetaPanel from '../componentes/MetaPanel.jsx'
 
 const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 const TIEMPOS = ['desayuno', 'comida', 'cena']
-
-const OBJETIVOS = [
-  { clave: 'longevidad', nombre: 'Longevidad (énfasis vegetal)' },
-  { clave: 'perdida', nombre: 'Pérdida de grasa' },
-  { clave: 'ganancia', nombre: 'Ganancia de músculo' },
-  { clave: 'general', nombre: 'General' },
-]
 
 /** Generador determinista por semilla (LCG), mismo espíritu que la app. */
 function generarSemana(objetivo, semilla) {
@@ -34,10 +30,32 @@ function generarSemana(objetivo, semilla) {
   })
 }
 
+const fmt = (v, dec = 0) => Number(v.toFixed(dec)).toLocaleString('es-MX')
+
+function EstadoMicro({ clave, valor, sexo }) {
+  const rango = rangoDe(clave, sexo)
+  const n = NUTRIENTES.find((x) => x.clave === clave)
+  if (!rango) return null
+  const ok = rango.tipo === 'max' ? valor <= rango.valor : valor >= rango.valor
+  return (
+    <tr>
+      <td>{n.nombre}</td>
+      <td className="num">{fmt(valor, n.decimales)} {n.unidad}</td>
+      <td className="num mini">{rango.tipo === 'max' ? '≤' : '≥'} {fmt(rango.valor, 0)}</td>
+      <td>{ok ? <span className="pastilla ok">✓</span> : <span className="pastilla alerta">{rango.tipo === 'max' ? 'excede' : 'falta'}</span>}</td>
+    </tr>
+  )
+}
+
 export default function Recetas() {
-  const [objetivo, setObjetivo] = useState('longevidad')
+  const [, setTick] = useState(0)
+  const perfil = cargarPerfil()
+  const metas = calcularMetas(perfil)
+  const objetivo = perfil?.objetivo ?? 'longevidad'
+  const sexo = perfil?.sexo || 'femenino' // sin perfil: rangos de mujer (los más exigentes)
+
   const [semilla, setSemilla] = useState(() => {
-    // Semilla por semana ISO: el menú se mantiene toda la semana.
+    // Semilla por semana ISO: el menú CAMBIA SOLO cada lunes y es fijo toda la semana.
     const ahora = new Date()
     const inicio = new Date(ahora.getFullYear(), 0, 1)
     return ahora.getFullYear() * 100 + Math.ceil(((ahora - inicio) / 86400000 + 1) / 7)
@@ -45,62 +63,113 @@ export default function Recetas() {
   const [abierta, setAbierta] = useState(null)
 
   const semana = useMemo(() => generarSemana(objetivo, semilla), [objetivo, semilla])
+  const ensalada = useMemo(() => calcularReceta(ENSALADA), [])
 
   return (
     <>
       <h2>Menú semanal</h2>
       <p className="mini">
-        Tres comidas por día armadas con el recetario según tu objetivo. El menú
-        es fijo durante la semana; si no te convence, genera otro.
+        Tres comidas por día + <strong>ensalada cruda diaria</strong> (fija para
+        todos los objetivos: la verdura cruda es la garantía de micronutrientes).
+        El menú rota solo cada semana; las porciones se escalan a TU meta.
       </p>
 
+      <MetaPanel onCambio={() => setTick((t) => t + 1)} />
+
       <div className="fila tarjeta">
-        <label>Objetivo:{' '}
-          <select value={objetivo} onChange={(e) => setObjetivo(e.target.value)}>
-            {OBJETIVOS.map((o) => <option key={o.clave} value={o.clave}>{o.nombre}</option>)}
-          </select>
-        </label>
+        <span className="pastilla">Objetivo del menú: <strong>{objetivo}</strong> (se toma de tu perfil)</span>
         <button className="boton secundario" onClick={() => setSemilla(Math.floor(Math.random() * 1e9))}>
           🎲 Otro menú
         </button>
       </div>
 
       {semana.map((dia, i) => {
-        const kcalDia = TIEMPOS.reduce((acc, t) => acc + dia[t].kcal, 0)
+        const kcalComidas = TIEMPOS.reduce((acc, t) => acc + calcularReceta(dia[t]).kcal, 0)
+        // Escala las comidas (no la ensalada) hacia la meta, entre ×1 y ×2.5 en pasos de 0.5.
+        const factor = metas
+          ? Math.min(2.5, Math.max(1, Math.round(((metas.kcal - ensalada.kcal) / kcalComidas) * 2) / 2))
+          : 1
+        const totalDia = {}
+        for (const n of NUTRIENTES) totalDia[n.clave] = ensalada[n.clave]
+        for (const t of TIEMPOS) {
+          const r = calcularReceta(dia[t], factor)
+          for (const n of NUTRIENTES) totalDia[n.clave] += r[n.clave]
+        }
+        const claveMicros = `${DIAS[i]}-micros`
         return (
           <div className="tarjeta" key={DIAS[i]}>
             <div className="fila" style={{ justifyContent: 'space-between' }}>
               <h3 style={{ margin: 0 }}>{DIAS[i]}</h3>
-              <span className="pastilla">≈ {kcalDia} kcal</span>
+              <span className="fila">
+                {factor !== 1 && <span className="pastilla">porciones ×{factor}</span>}
+                <span className="pastilla">
+                  ≈ {fmt(totalDia.kcal)} kcal{metas ? ` de ${fmt(metas.kcal)}` : ''}
+                </span>
+                <span className="pastilla">P {fmt(totalDia.prot)} g</span>
+              </span>
             </div>
             <table>
               <tbody>
                 {TIEMPOS.map((t) => {
                   const r = dia[t]
+                  const tot = calcularReceta(r, factor)
                   const clave = `${DIAS[i]}-${t}`
                   return (
                     <tr key={t}>
-                      <td style={{ width: 110, textTransform: 'capitalize' }} className="mini">{t}</td>
+                      <td style={{ width: 100, textTransform: 'capitalize' }} className="mini">{t}</td>
                       <td>
                         <button
                           className="borrar"
-                          style={{ padding: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--marron)' }}
+                          style={{ padding: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--marron)', textAlign: 'left' }}
                           onClick={() => setAbierta(abierta === clave ? null : clave)}
                         >
                           {r.nombre} {abierta === clave ? '▴' : '▾'}
                         </button>
                         {abierta === clave && (
                           <ul className="mini" style={{ margin: '0.3rem 0 0' }}>
-                            {r.ingredientes.map((ing) => <li key={ing}>{ing}</li>)}
+                            {ingredientesLegibles(r, factor).map((ing) => <li key={ing}>{ing}</li>)}
                           </ul>
                         )}
                       </td>
-                      <td className="num mini">{r.kcal} kcal</td>
+                      <td className="num mini">
+                        {fmt(tot.kcal)} kcal · P {fmt(tot.prot)} C {fmt(tot.carb)} G {fmt(tot.gras)}
+                      </td>
                     </tr>
                   )
                 })}
+                <tr>
+                  <td className="mini">siempre</td>
+                  <td>
+                    <button
+                      className="borrar"
+                      style={{ padding: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--verde)', textAlign: 'left' }}
+                      onClick={() => setAbierta(abierta === `${DIAS[i]}-ens` ? null : `${DIAS[i]}-ens`)}
+                    >
+                      🥗 {ENSALADA.nombre} {abierta === `${DIAS[i]}-ens` ? '▴' : '▾'}
+                    </button>
+                    {abierta === `${DIAS[i]}-ens` && (
+                      <ul className="mini" style={{ margin: '0.3rem 0 0' }}>
+                        {ingredientesLegibles(ENSALADA).map((ing) => <li key={ing}>{ing}</li>)}
+                      </ul>
+                    )}
+                  </td>
+                  <td className="num mini">{fmt(ensalada.kcal)} kcal</td>
+                </tr>
               </tbody>
             </table>
+            <details style={{ marginTop: '0.5rem' }}>
+              <summary className="mini" style={{ cursor: 'pointer' }}>
+                Ver micronutrientes del día vs. rango saludable
+              </summary>
+              <table style={{ marginTop: '0.4rem' }}>
+                <thead><tr><th>Micro</th><th className="num">Día</th><th className="num">Rango</th><th></th></tr></thead>
+                <tbody>
+                  {MICROS_APP.map((clave) => (
+                    <EstadoMicro key={clave} clave={clave} valor={totalDia[clave]} sexo={sexo} />
+                  ))}
+                </tbody>
+              </table>
+            </details>
           </div>
         )
       })}

@@ -110,7 +110,47 @@ export const ALIMENTOS = [
   { id: 'azucar', nombre: 'Azúcar blanca o morena', grupo: 'Azúcares', porcion: '2 1/2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 0, vitC: 0, vitD: 0, b12: 0 },
   { id: 'miel', nombre: 'Miel de abeja', grupo: 'Azúcares', porcion: '2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0, calcio: 1, hierro: 0.1, potasio: 7, sodio: 1, vitC: 0, vitD: 0, b12: 0 },
   { id: 'mermelada', nombre: 'Mermelada de frutas', grupo: 'Azúcares', porcion: '2 1/2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0.2, calcio: 3, hierro: 0.1, potasio: 13, sodio: 5, vitC: 1, vitD: 0, b12: 0 },
+  // ── Marcas comerciales (datos de etiqueta, aproximados, por porción) ──
+  { id: 'cornflakes', nombre: 'Corn Flakes (Kelloggs)', grupo: 'Marcas comerciales', porcion: '30 g (3/4 taza)', kcal: 110, prot: 2, carb: 25, gras: 0.2, fibra: 0.7, calcio: 5, hierro: 8, potasio: 35, sodio: 200, vitC: 6, vitD: 1, b12: 0.6 },
+  { id: 'zucaritas', nombre: 'Zucaritas', grupo: 'Marcas comerciales', porcion: '30 g (3/4 taza)', kcal: 110, prot: 1, carb: 26, gras: 0.1, fibra: 0.5, calcio: 2, hierro: 4.5, potasio: 25, sodio: 150, vitC: 6, vitD: 1, b12: 0.5 },
+  { id: 'avenaquaker', nombre: 'Avena instantánea (Quaker, sobre)', grupo: 'Marcas comerciales', porcion: '1 sobre (35 g)', kcal: 130, prot: 4, carb: 27, gras: 2, fibra: 3, calcio: 105, hierro: 3.9, potasio: 120, sodio: 80, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'panbimbo', nombre: 'Pan Bimbo blanco', grupo: 'Marcas comerciales', porcion: '1 rebanada', kcal: 74, prot: 2.4, carb: 13.6, gras: 1, fibra: 0.7, calcio: 40, hierro: 0.9, potasio: 35, sodio: 135, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'panbimboint', nombre: 'Pan Bimbo integral', grupo: 'Marcas comerciales', porcion: '1 rebanada', kcal: 71, prot: 3, carb: 12, gras: 1.2, fibra: 1.7, calcio: 45, hierro: 0.9, potasio: 70, sodio: 130, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'galletaemperador', nombre: 'Galletas Emperador', grupo: 'Marcas comerciales', porcion: '2 piezas', kcal: 130, prot: 1, carb: 18, gras: 6, fibra: 0.5, calcio: 5, hierro: 0.5, potasio: 25, sodio: 85, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'oreo', nombre: 'Galletas Oreo', grupo: 'Marcas comerciales', porcion: '3 piezas', kcal: 160, prot: 1, carb: 25, gras: 7, fibra: 1, calcio: 8, hierro: 1.4, potasio: 50, sodio: 135, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'chokis', nombre: 'Galletas Chokis', grupo: 'Marcas comerciales', porcion: '4 piezas', kcal: 150, prot: 2, carb: 20, gras: 7, fibra: 0.8, calcio: 10, hierro: 0.8, potasio: 60, sodio: 90, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'barrita', nombre: 'Barrita Marinela (fresa)', grupo: 'Marcas comerciales', porcion: '1 pieza', kcal: 150, prot: 2, carb: 25, gras: 5, fibra: 0.7, calcio: 15, hierro: 0.7, potasio: 40, sodio: 105, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'danone', nombre: 'Yogurt Danone con fruta', grupo: 'Marcas comerciales', porcion: '1 vaso (220 g)', kcal: 180, prot: 6, carb: 30, gras: 3.5, fibra: 0.5, calcio: 220, hierro: 0.1, potasio: 280, sodio: 105, vitC: 1, vitD: 0.8, b12: 0.6 },
+  { id: 'yakult', nombre: 'Yakult', grupo: 'Marcas comerciales', porcion: '1 frasco (80 ml)', kcal: 65, prot: 1, carb: 15, gras: 0, fibra: 0, calcio: 30, hierro: 0, potasio: 40, sodio: 20, vitC: 0, vitD: 0, b12: 0.1 },
+  { id: 'cocacola', nombre: 'Coca-Cola', grupo: 'Marcas comerciales', porcion: '1 lata (355 ml)', kcal: 149, prot: 0, carb: 37.5, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 15, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'refrescolight', nombre: 'Refresco light/zero', grupo: 'Marcas comerciales', porcion: '1 lata (355 ml)', kcal: 1, prot: 0, carb: 0, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 40, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'jugodelvalle', nombre: 'Jugo del Valle (néctar)', grupo: 'Marcas comerciales', porcion: '1 vaso (250 ml)', kcal: 110, prot: 0, carb: 27, gras: 0, fibra: 0.3, calcio: 5, hierro: 0.2, potasio: 90, sodio: 10, vitC: 30, vitD: 0, b12: 0 },
+  { id: 'electrolit', nombre: 'Electrolit', grupo: 'Marcas comerciales', porcion: '1 botella (625 ml)', kcal: 140, prot: 0, carb: 34, gras: 0, fibra: 0, calcio: 10, hierro: 0, potasio: 90, sodio: 285, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'sabritas', nombre: 'Papas Sabritas originales', grupo: 'Marcas comerciales', porcion: '1 bolsa (45 g)', kcal: 240, prot: 3, carb: 23, gras: 15, fibra: 1.8, calcio: 10, hierro: 0.5, potasio: 570, sodio: 170, vitC: 9, vitD: 0, b12: 0 },
+  { id: 'doritos', nombre: 'Doritos Nacho', grupo: 'Marcas comerciales', porcion: '1 bolsa (58 g)', kcal: 300, prot: 4, carb: 36, gras: 15, fibra: 2.3, calcio: 60, hierro: 0.7, potasio: 120, sodio: 340, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'cacahuatejap', nombre: 'Cacahuates japoneses', grupo: 'Marcas comerciales', porcion: '1 porción (50 g)', kcal: 250, prot: 8, carb: 22, gras: 14, fibra: 2, calcio: 25, hierro: 0.8, potasio: 240, sodio: 190, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'maruchan', nombre: 'Maruchan (vaso)', grupo: 'Marcas comerciales', porcion: '1 vaso (64 g)', kcal: 290, prot: 6, carb: 38, gras: 12, fibra: 2, calcio: 20, hierro: 2, potasio: 130, sodio: 1180, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'nutella', nombre: 'Nutella', grupo: 'Marcas comerciales', porcion: '1 cucharada (19 g)', kcal: 100, prot: 1, carb: 11, gras: 6, fibra: 0.6, calcio: 20, hierro: 0.6, potasio: 75, sodio: 10, vitC: 0, vitD: 0, b12: 0 },
 ]
+
+// Rangos saludables de micronutrientes (RDA/AI adulto, NIH). Dirección:
+// 'min' = no bajar de la meta; 'max' = no pasar el tope (sodio).
+export const RANGOS_MICROS = [
+  { clave: 'fibra', tipo: 'min', hombres: 38, mujeres: 25 },
+  { clave: 'calcio', tipo: 'min', hombres: 1000, mujeres: 1000 },
+  { clave: 'hierro', tipo: 'min', hombres: 8, mujeres: 18 },
+  { clave: 'potasio', tipo: 'min', hombres: 3400, mujeres: 2600 },
+  { clave: 'sodio', tipo: 'max', hombres: 2300, mujeres: 2300 },
+  { clave: 'vitC', tipo: 'min', hombres: 90, mujeres: 75 },
+  { clave: 'vitD', tipo: 'min', hombres: 15, mujeres: 15 },
+  { clave: 'b12', tipo: 'min', hombres: 2.4, mujeres: 2.4 },
+]
+
+export function rangoDe(clave, sexo) {
+  const r = RANGOS_MICROS.find((x) => x.clave === clave)
+  if (!r) return null
+  return { tipo: r.tipo, valor: sexo === 'masculino' ? r.hombres : r.mujeres }
+}
 
 export const NUTRIENTES = [
   { clave: 'kcal', nombre: 'Calorías', unidad: 'kcal', decimales: 0 },

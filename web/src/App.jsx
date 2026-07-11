@@ -2,6 +2,8 @@ import { HashRouter, NavLink, Route, Routes } from 'react-router-dom'
 import Inicio from './paginas/Inicio.jsx'
 import Alimentos from './paginas/Alimentos.jsx'
 import Recetas from './paginas/Recetas.jsx'
+import Micros from './paginas/Micros.jsx'
+import Suplementos from './paginas/Suplementos.jsx'
 import Sueno from './paginas/Sueno.jsx'
 
 export default function App() {
@@ -14,6 +16,8 @@ export default function App() {
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'activo' : '')}>Inicio</NavLink>
           <NavLink to="/alimentos" className={({ isActive }) => (isActive ? 'activo' : '')}>Alimentos</NavLink>
           <NavLink to="/recetas" className={({ isActive }) => (isActive ? 'activo' : '')}>Recetas</NavLink>
+          <NavLink to="/micros" className={({ isActive }) => (isActive ? 'activo' : '')}>Micros</NavLink>
+          <NavLink to="/suplementos" className={({ isActive }) => (isActive ? 'activo' : '')}>Suplementos</NavLink>
           <NavLink to="/sueno" className={({ isActive }) => (isActive ? 'activo' : '')}>Sueño</NavLink>
         </nav>
       </header>
@@ -22,6 +26,8 @@ export default function App() {
           <Route path="/" element={<Inicio />} />
           <Route path="/alimentos" element={<Alimentos />} />
           <Route path="/recetas" element={<Recetas />} />
+          <Route path="/micros" element={<Micros />} />
+          <Route path="/suplementos" element={<Suplementos />} />
           <Route path="/sueno" element={<Sueno />} />
         </Routes>
       </main>

@@ -1,2 +1,4 @@
 node_modules/
 dist/
+# El APK no se versiona (17 MB por build): se copia desde app/build al desplegar
+public/bodymetria.apk

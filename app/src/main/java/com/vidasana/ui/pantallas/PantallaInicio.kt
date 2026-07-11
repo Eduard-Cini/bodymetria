@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.PREFIJO_MEDICA
-import com.vidasana.datos.PREFIJO_MICRO
 import com.vidasana.datos.TipoDiario
 import com.vidasana.datos.flujoPerfil
 import com.vidasana.ui.componentes.formatear
@@ -60,7 +59,7 @@ private data class Seccion(
 
 private val SECCIONES = listOf(
     Seccion("macros", "Macros", Icons.Default.Restaurant),
-    Seccion("micros", "Micros", Icons.Default.Eco),
+    Seccion("diario/${TipoDiario.VERDURAS}", "Micronutrientes", Icons.Default.Eco),
     Seccion("ejercicio", "Ejercicio", Icons.Default.FitnessCenter),
     Seccion("composicion", "Composición", Icons.Default.MonitorWeight),
     Seccion("sueno", "Sueño", Icons.Default.Bedtime),
@@ -78,7 +77,7 @@ private val SECCION_DOCTOR = Seccion("doctor", "Doctor", Icons.Default.MedicalSe
 /** Cada objetivo empuja sus secciones hacia arriba en la portada. */
 private val PESOS_OBJETIVO = mapOf(
     "Longevidad" to mapOf(
-        "sueno" to 3, "ejercicio" to 2, "macros" to 2, "micros" to 1, "composicion" to 1,
+        "sueno" to 3, "ejercicio" to 2, "macros" to 2, "diario/${TipoDiario.VERDURAS}" to 1, "composicion" to 1,
         "diario/${TipoDiario.ESTRES}" to 2, "diario/${TipoDiario.AGUA}" to 1,
         "diario/${TipoDiario.MEDITACION}" to 1,
     ),
@@ -145,8 +144,8 @@ fun PantallaInicio(nav: NavHostController) {
         "usoCelular" -> if (celularHoy > 0) "$celularHoy min" else "—"
         "diario/${TipoDiario.ANIMO}" -> valorDiario(TipoDiario.ANIMO)?.let { "${it.toInt()}/10" } ?: "—"
         "diario/${TipoDiario.REGLA}" -> valorDiario(TipoDiario.REGLA)?.let { if (it > 0) "Sí" else "No" } ?: "—"
-        "micros" -> diarioHoy.count { it.tipo.startsWith(PREFIJO_MICRO) }
-            .let { if (it > 0) "$it registrados" else "—" }
+        "diario/${TipoDiario.VERDURAS}" -> valorDiario(TipoDiario.VERDURAS)
+            ?.let { "${it.toInt()} porciones" } ?: "—"
         "doctor" -> diarioHoy.count { it.tipo.startsWith(PREFIJO_MEDICA) }
             .let { if (it > 0) "$it hoy" else "—" }
         else -> "—"

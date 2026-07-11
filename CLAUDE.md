@@ -23,8 +23,10 @@ visible es Bodymetria.
    comunes + ya usadas).
 
 Además (v1):
-- `micros` — metas RDA por sexo (Metas.kt: MICROS; sodio es tope) + registro del
-  total diario; los valores viven en `diario` como "micro.<clave>".
+- `diario/verduras` — sección "Micronutrientes": registra PORCIONES DE VERDURA
+  al día (meta 3+) como proxy de micros; los totales finos viven en el sitio
+  web. (Sustituyó a la antigua pantalla de 8 micros; los datos "micro.<clave>"
+  viejos siguen en la BD y en respaldos, inofensivos.)
 - `doctor` — métricas médicas definidas por el usuario (tabla metricas_medicas,
   v3; valores en `diario` como "med.<id>"); SOLO visible si se activa el switch
   en Configuración (perfil.seccionMedica).
@@ -85,6 +87,24 @@ curl necesitan `--ssl-no-revoke` en esta red.
 - Gráficas de una sola serie con el color primario del tema (Material You dinámico
   en Android 12+); barras desde cero para magnitudes, líneas para niveles/medidas.
 - minSdk 26, targetSdk 35. Sin Hilt, sin APIs en vivo.
+
+## Sitio web (`web/`)
+React 19 + Vite, 100% estático (HashRouter, base './'), datos en localStorage.
+`npm run dev` en web/ (o preview "bodymetria-web" del launch.json). Páginas:
+- Inicio (descarga del APK — copiar app-debug.apk a web/public/bodymetria.apk
+  al desplegar; está gitignoreado), Alimentos, Recetas, Micros, Suplementos, Sueño.
+- `datos/alimentos.js`: base POR RACIÓN según la Guía de Alimentos IMSS
+  (macros = promedio del grupo de equivalentes) + marcas comerciales por
+  etiqueta; micros aproximados (USDA) por ración. RANGOS_MICROS con dirección
+  (min = no bajar; sodio max = no pasar).
+- `datos/perfil.js`: meta kcal/macros con Mifflin-St Jeor × factor de actividad
+  × ajuste por objetivo (mismos parámetros que la app).
+- `datos/recetas.js`: ingredientes = [idAlimento, raciones] → kcal/macros/micros
+  CALCULADOS con calcularReceta(); ENSALADA cruda diaria fija (garantía de
+  micros). El menú semanal rota solo (semilla = semana ISO) y escala porciones
+  ×1..×2.5 hacia la meta del perfil.
+- Alimentos propios: se capturan POR 100 g (como la etiqueta NOM-051) + gramos
+  de la porción; se convierten al guardar.
 
 ## Pendiente (fase 2)
 - Captura automática: UsageStatsManager, Health Connect.

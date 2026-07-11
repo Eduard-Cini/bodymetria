@@ -65,6 +65,12 @@ private fun configDe(tipo: String): ConfigDiario = when (tipo) {
     TipoDiario.MEDITACION -> ConfigDiario("Meditación", "", ModoEntrada.BOOL, "¿Meditaste?", barras = true)
     TipoDiario.ANIMO -> ConfigDiario("Estado de ánimo", "", ModoEntrada.NIVEL, "Ánimo general", barras = false)
     TipoDiario.REGLA -> ConfigDiario("Ciclo menstrual", "", ModoEntrada.BOOL, "¿Día de regla?", barras = true)
+    // Micronutrientes por proxy: porciones de verdura al día. Los totales
+    // finos se calculan en el sitio web; comer verdura abundante (y la
+    // ensalada cruda del menú) garantiza los micros en la práctica.
+    TipoDiario.VERDURAS -> ConfigDiario(
+        "Micronutrientes", "porciones", ModoEntrada.NUMERO, "Porciones de verdura hoy", barras = true,
+    )
     else -> ConfigDiario(tipo, "", ModoEntrada.NUMERO, tipo, barras = false)
 }
 
@@ -131,6 +137,23 @@ fun PantallaDiario(nav: NavHostController, tipo: String) {
                 etiqueta = config.etiquetaTexto,
                 sugerencias = textosUsados,
                 modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        if (tipo == TipoDiario.VERDURAS) {
+            val meta = 3f
+            val llevas = numero.toFloatOrNull() ?: existente?.valor ?: 0f
+            LinearProgressIndicator(
+                progress = { (llevas / meta).coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            )
+            Text(
+                "Meta: 3+ porciones de verdura variada (1 porción ≈ 1 taza cruda o " +
+                    "1/2 taza cocida). Con eso y la ensalada del menú, tus " +
+                    "micronutrientes quedan cubiertos; los totales finos se calculan " +
+                    "en el sitio web.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 

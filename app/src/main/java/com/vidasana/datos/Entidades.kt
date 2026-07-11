@@ -118,6 +118,7 @@ object TipoDiario {
     const val MEDITACION = "meditacion" // 0 = no, 1 = sí
     const val ANIMO = "animo"          // escala 1-10
     const val REGLA = "regla"          // 0 = no, 1 = sí (solo perfil femenino)
+    const val VERDURAS = "verduras"    // porciones de verdura al día (proxy de micros)
 }
 
 // ── Sección 9: uso del celular por app ───────────────────────────────
