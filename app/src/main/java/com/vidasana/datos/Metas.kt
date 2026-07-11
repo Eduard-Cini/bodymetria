@@ -75,6 +75,40 @@ fun calcularMetas(perfil: Perfil, pesoKg: Float?, mediaEjercicioKcalDia: Float):
 fun metaAguaMl(pesoKg: Float?): Int? =
     pesoKg?.takeIf { it > 0f }?.let { (it * 35f).roundToInt() }
 
+// ── Gasto por ejercicio: estimación por METs ─────────────────────────
+/**
+ * MET aproximado por disciplina (Compendium of Physical Activities).
+ * 1 MET = 1 kcal por kg por hora en reposo.
+ */
+private val METS = mapOf(
+    "calistenia" to 4.5f,
+    "gym" to 4.0f,
+    "correr" to 9.8f,
+    "trotar" to 7.0f,
+    "estirar" to 2.5f,
+    "movilidad" to 3.0f,
+    "tenis de mesa" to 4.0f,
+    "fútbol" to 7.0f,
+    "futbol" to 7.0f,
+    "natación" to 6.0f,
+    "natacion" to 6.0f,
+    "bici" to 6.8f,
+    "caminata" to 3.5f,
+    "senderismo" to 6.0f,
+    "ultimate" to 8.0f,
+)
+
+/**
+ * kcal ≈ MET × peso × horas. Disciplina desconocida usa MET 5 (moderado);
+ * sin peso registrado se asume 70 kg. Es un aproximado editable.
+ */
+fun estimarGastoKcal(disciplina: String, duracionMin: Int, pesoKg: Float?): Int? {
+    if (duracionMin <= 0 || disciplina.isBlank()) return null
+    val met = METS[disciplina.trim().lowercase()] ?: 5.0f
+    val peso = pesoKg?.takeIf { it > 0f } ?: 70f
+    return (met * peso * duracionMin / 60f).roundToInt()
+}
+
 // ── Micronutrientes: metas de referencia (RDA/AI adulto, NIH) ────────
 data class MetaMicro(
     val clave: String,   // se guarda como ValorDiario tipo "micro.<clave>"

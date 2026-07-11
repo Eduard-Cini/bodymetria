@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.Sesion
+import com.vidasana.datos.estimarGastoKcal
 import com.vidasana.ui.componentes.BotonBorrar
 import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
@@ -86,6 +87,7 @@ fun PantallaEjercicio(nav: NavHostController) {
     var disciplina by remember { mutableStateOf("") }
     var duracion by remember { mutableStateOf("") }
     var gasto by remember { mutableStateOf("") }
+    var gastoManual by remember { mutableStateOf(false) }
     var esfuerzo by remember { mutableIntStateOf(5) }
     var notas by remember { mutableStateOf("") }
     val ejercicios = remember { mutableStateListOf<EjercicioEditable>() }
@@ -93,6 +95,18 @@ fun PantallaEjercicio(nav: NavHostController) {
     val esFuerza = disciplina.trim().lowercase() in DISCIPLINAS_FUERZA
     LaunchedEffect(esFuerza) {
         if (esFuerza && ejercicios.isEmpty()) ejercicios.add(EjercicioEditable())
+    }
+
+    // Gasto estimado por METs (disciplina × tiempo × peso); editable por el usuario.
+    val composiciones by remember { db.composicion().todos() }.collectAsState(initial = emptyList())
+    LaunchedEffect(disciplina, duracion, composiciones) {
+        if (!gastoManual) {
+            gasto = estimarGastoKcal(
+                disciplina,
+                duracion.toIntOrNull() ?: 0,
+                composiciones.firstOrNull()?.pesoKg,
+            )?.toString() ?: ""
+        }
     }
 
     val sesiones by remember { db.ejercicio().sesionesCompletas() }.collectAsState(initial = emptyList())
@@ -119,8 +133,19 @@ fun PantallaEjercicio(nav: NavHostController) {
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CampoNumero(duracion, { duracion = it }, "Duración", "min", entero = true, modifier = Modifier.weight(1f))
-            CampoNumero(gasto, { gasto = it }, "Gasto", "kcal", entero = true, modifier = Modifier.weight(1f))
+            CampoNumero(
+                gasto,
+                { gasto = it; gastoManual = true },
+                "Gasto", "kcal",
+                entero = true,
+                modifier = Modifier.weight(1f),
+            )
         }
+        Text(
+            "El gasto se estima con la disciplina, el tiempo y tu peso; puedes corregirlo.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         SelectorNivel("¿Qué tan pesado se sintió?", esfuerzo, { esfuerzo = it })
         OutlinedTextField(
             value = notas,
@@ -198,6 +223,7 @@ fun PantallaEjercicio(nav: NavHostController) {
                     disciplina = ""
                     duracion = ""
                     gasto = ""
+                    gastoManual = false
                     esfuerzo = 5
                     notas = ""
                     ejercicios.clear()
