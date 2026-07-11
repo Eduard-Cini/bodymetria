@@ -43,6 +43,14 @@ Además (v1):
 La portada ordena las tarjetas según los objetivos del perfil (PESOS_OBJETIVO en
 PantallaInicio.kt); tarjeta con dato de hoy = icono en color primario.
 
+## Sitio web (`web/`)
+React 19 + Vite, estático (HashRouter, base './'), localStorage. Páginas: Inicio
+(descarga del APK desde `web/public/bodymetria.apk` — COPIAR ahí el APK nuevo en
+cada release), Alimentos (raciones de la Guía IMSS en `src/datos/alimentos.js`,
+macros = promedio del grupo, micros aproximados; totales para pasar a la app),
+Recetas (menú semanal por semilla), Sueño (ciclos + papers). Comandos:
+`npm run dev` / `npm run build` en `web/`. Preview: launch.json "bodymetria-web".
+
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto
   ISO yyyy-MM-dd; tabla `diario` unifica las secciones de un valor/día con clave
