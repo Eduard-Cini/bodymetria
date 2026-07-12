@@ -11,7 +11,7 @@ export default function Inicio() {
           estadísticas. <strong>Todo se guarda solo en tu teléfono.</strong>
         </p>
         <p>
-          <a className="boton" href="bodymetria.apk" download>Descargar APK (Android)</a>
+          <a className="boton" href="https://github.com/Eduard-Cini/bodymetria/releases/latest/download/bodymetria.apk">Descargar APK (Android)</a>
         </p>
         <p className="mini">Versión 0.1 · ~17 MB · Android 8.0 o superior</p>
       </div>

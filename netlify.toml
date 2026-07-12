@@ -7,10 +7,5 @@
   publish = "dist"
 
 # El sitio usa HashRouter, así que no necesita reglas de redirección SPA.
-
-# El APK se sirve con el tipo correcto y forzando descarga.
-[[headers]]
-  for = "/bodymetria.apk"
-  [headers.values]
-    Content-Type = "application/vnd.android.package-archive"
-    Content-Disposition = "attachment; filename=bodymetria.apk"
+# El APK NO se sirve desde Netlify: vive como release en GitHub y el botón de
+# descarga apunta a releases/latest/download/bodymetria.apk.
