@@ -1,0 +1,13 @@
+# Configuración de despliegue en Netlify.
+# El sitio usa HashRouter, así que no necesita reglas de redirección SPA.
+[build]
+  base = "web"
+  publish = "web/dist"
+  command = "npm run build"
+
+# El APK se sirve con el tipo correcto y forzando descarga.
+[[headers]]
+  for = "/bodymetria.apk"
+  [headers.values]
+    Content-Type = "application/vnd.android.package-archive"
+    Content-Disposition = "attachment; filename=bodymetria.apk"
