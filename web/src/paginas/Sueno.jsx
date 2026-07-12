@@ -52,7 +52,8 @@ function horasDormir(despertar) {
     while (t < 0) t += 24 * 60
     const hh = String(Math.floor(t / 60)).padStart(2, '0')
     const mm = String(t % 60).padStart(2, '0')
-    return { ciclos, hora: `${hh}:${mm}`, horas: (ciclos * 90) / 60 }
+    // 5 ciclos = 7.5 h, dentro del punto óptimo de 7-8 h para adultos.
+    return { ciclos, hora: `${hh}:${mm}`, horas: (ciclos * 90) / 60, recomendado: ciclos === 5 }
   })
 }
 
@@ -70,20 +71,24 @@ export default function Sueno() {
           </label>
         </div>
         <p className="mini">
-          El sueño va en ciclos de ~90 minutos; despertar al final de un ciclo se
-          siente mejor que a la mitad. Sumamos ~15 min para conciliar el sueño.
+          El sueño va en ciclos de ~90 min y despertar al final de uno se siente
+          mejor que a la mitad — pero es un <strong>heurístico aproximado</strong>:
+          la duración del ciclo varía de 70 a 120 min entre personas y a lo largo
+          de la noche. Tómalo como guía, no como reloj exacto. Sumamos ~15 min para
+          conciliar el sueño.
         </p>
         <div className="fila">
           {opciones.map((o) => (
-            <span key={o.ciclos} className={'pastilla' + (o.ciclos === 6 ? ' ok' : '')}>
+            <span key={o.ciclos} className={'pastilla' + (o.recomendado ? ' ok' : '')}>
               Acuéstate a las <strong>{o.hora}</strong> · {o.ciclos} ciclos ({o.horas} h)
-              {o.ciclos === 6 ? ' ← ideal' : ''}
+              {o.recomendado ? ' ← objetivo 7-8 h' : ''}
             </span>
           ))}
         </div>
         <p className="mini" style={{ marginBottom: 0 }}>
-          Registra después en la app tus horas y calificación (sección Sueño)
-          para ver tu media y varianza reales.
+          El punto óptimo para adultos son <strong>7-8 horas</strong>: por debajo de 6
+          y por encima de 9 se asocia con más mortalidad. Registra después en la app
+          tus horas y calificación para ver tu media y varianza reales.
         </p>
       </div>
 

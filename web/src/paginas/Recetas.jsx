@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ENSALADA, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
+import { ensaladaSemana, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
 import { NUTRIENTES, MICROS_APP, rangoDe } from '../datos/alimentos.js'
 import { calcularMetas, cargarPerfil } from '../datos/perfil.js'
 import MetaPanel from '../componentes/MetaPanel.jsx'
@@ -37,12 +37,21 @@ function EstadoMicro({ clave, valor, sexo }) {
   const n = NUTRIENTES.find((x) => x.clave === clave)
   if (!rango) return null
   const ok = rango.tipo === 'max' ? valor <= rango.valor : valor >= rango.valor
+  // La vitamina D casi no se obtiene de la comida: su vía principal es el sol.
+  // No la marcamos como "falta" del menú, sino como recordatorio.
+  const esVitD = clave === 'vitD'
   return (
     <tr>
       <td>{n.nombre}</td>
       <td className="num">{fmt(valor, n.decimales)} {n.unidad}</td>
       <td className="num mini">{rango.tipo === 'max' ? '≤' : '≥'} {fmt(rango.valor, 0)}</td>
-      <td>{ok ? <span className="pastilla ok">✓</span> : <span className="pastilla alerta">{rango.tipo === 'max' ? 'excede' : 'falta'}</span>}</td>
+      <td>
+        {esVitD
+          ? <span className="pastilla">☀ del sol</span>
+          : ok
+            ? <span className="pastilla ok">✓</span>
+            : <span className="pastilla alerta">{rango.tipo === 'max' ? 'excede' : 'falta'}</span>}
+      </td>
     </tr>
   )
 }
@@ -63,15 +72,16 @@ export default function Recetas() {
   const [abierta, setAbierta] = useState(null)
 
   const semana = useMemo(() => generarSemana(objetivo, semilla), [objetivo, semilla])
-  const ensalada = useMemo(() => calcularReceta(ENSALADA), [])
+  const ENSALADA = useMemo(() => ensaladaSemana(semilla), [semilla])
+  const ensalada = useMemo(() => calcularReceta(ENSALADA), [ENSALADA])
 
   return (
     <>
       <h2>Menú semanal</h2>
       <p className="mini">
-        Tres comidas por día + <strong>ensalada cruda diaria</strong> (fija para
-        todos los objetivos: la verdura cruda es la garantía de micronutrientes).
-        El menú rota solo cada semana; las porciones se escalan a TU meta.
+        Tres comidas por día + una <strong>ensalada cruda</strong> que rota cada
+        semana (la verdura cruda es la garantía de micronutrientes). El menú
+        también rota solo cada semana; las porciones se escalan a TU meta.
       </p>
 
       <MetaPanel onCambio={() => setTick((t) => t + 1)} />
@@ -169,6 +179,12 @@ export default function Recetas() {
                   ))}
                 </tbody>
               </table>
+              <p className="mini" style={{ marginTop: '0.4rem', marginBottom: 0 }}>
+                Suma la ensalada + las 3 comidas. La <strong>vitamina D</strong> casi no
+                viene de la comida (su vía es el sol, ~15 min varias veces/semana), y la
+                <strong> B12</strong> solo del origen animal del menú (huevo, lácteos,
+                pescado).
+              </p>
             </details>
           </div>
         )

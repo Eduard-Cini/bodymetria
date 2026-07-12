@@ -43,6 +43,8 @@ export const ALIMENTOS = [
   { id: 'chilepoblano', nombre: 'Chile poblano', grupo: 'Verduras', porcion: '1/2 pieza', kcal: 25, prot: 2, carb: 4, gras: 0, fibra: 1.5, calcio: 6, hierro: 0.4, potasio: 100, sodio: 2, vitC: 40, vitD: 0, b12: 0 },
   { id: 'pepino', nombre: 'Pepino rebanado', grupo: 'Verduras', porcion: '1 1/2 taza', kcal: 25, prot: 2, carb: 4, gras: 0, fibra: 1, calcio: 25, hierro: 0.4, potasio: 220, sodio: 3, vitC: 4, vitD: 0, b12: 0 },
   { id: 'salsa', nombre: 'Salsa mexicana / pico de gallo', grupo: 'Verduras', porcion: '1/2 taza', kcal: 25, prot: 2, carb: 4, gras: 0, fibra: 1.5, calcio: 12, hierro: 0.4, potasio: 260, sodio: 20, vitC: 15, vitD: 0, b12: 0 },
+  { id: 'kale', nombre: 'Kale (col rizada)', grupo: 'Verduras', porcion: '1 taza', kcal: 35, prot: 2.5, carb: 6, gras: 0.5, fibra: 2, calcio: 180, hierro: 1, potasio: 250, sodio: 25, vitC: 80, vitD: 0, b12: 0 },
+  { id: 'berro', nombre: 'Berro', grupo: 'Verduras', porcion: '1 taza', kcal: 25, prot: 2, carb: 4, gras: 0, fibra: 1, calcio: 120, hierro: 0.2, potasio: 330, sodio: 20, vitC: 43, vitD: 0, b12: 0 },
   // ── Frutas (60 kcal · C15 · G0 · P0) ──
   { id: 'platano', nombre: 'Plátano tabasco', grupo: 'Frutas', porcion: '1/2 pieza', kcal: 60, prot: 0, carb: 15, gras: 0, fibra: 1.6, calcio: 3, hierro: 0.2, potasio: 215, sodio: 1, vitC: 5.2, vitD: 0, b12: 0 },
   { id: 'manzana', nombre: 'Manzana chica', grupo: 'Frutas', porcion: '1 pieza', kcal: 60, prot: 0, carb: 15, gras: 0, fibra: 3.1, calcio: 8, hierro: 0.1, potasio: 139, sodio: 1, vitC: 6, vitD: 0, b12: 0 },
@@ -106,14 +108,14 @@ export const ALIMENTOS = [
   { id: 'pepitas', nombre: 'Pepitas sin cáscara', grupo: 'Grasas con proteína', porcion: '1 cucharada', kcal: 70, prot: 3, carb: 3, gras: 5, fibra: 0.6, calcio: 5, hierro: 0.9, potasio: 80, sodio: 1, vitC: 0, vitD: 0, b12: 0 },
   { id: 'cremacacahuate', nombre: 'Mantequilla de cacahuate', grupo: 'Grasas con proteína', porcion: '2 cucharaditas', kcal: 70, prot: 3, carb: 3, gras: 5, fibra: 0.6, calcio: 5, hierro: 0.2, potasio: 63, sodio: 50, vitC: 0, vitD: 0, b12: 0 },
   { id: 'chia', nombre: 'Chía', grupo: 'Grasas con proteína', porcion: '1 cucharada', kcal: 70, prot: 3, carb: 3, gras: 5, fibra: 4.1, calcio: 76, hierro: 0.9, potasio: 49, sodio: 2, vitC: 0.2, vitD: 0, b12: 0 },
+  { id: 'ajonjoli', nombre: 'Ajonjolí (semilla de sésamo)', grupo: 'Grasas con proteína', porcion: '1 cucharada', kcal: 52, prot: 1.6, carb: 2.1, gras: 4.5, fibra: 1.1, calcio: 88, hierro: 1.3, potasio: 42, sodio: 1, vitC: 0, vitD: 0, b12: 0 },
   // ── Azúcares (40 kcal · C10) ──
   { id: 'azucar', nombre: 'Azúcar blanca o morena', grupo: 'Azúcares', porcion: '2 1/2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 0, vitC: 0, vitD: 0, b12: 0 },
   { id: 'miel', nombre: 'Miel de abeja', grupo: 'Azúcares', porcion: '2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0, calcio: 1, hierro: 0.1, potasio: 7, sodio: 1, vitC: 0, vitD: 0, b12: 0 },
   { id: 'mermelada', nombre: 'Mermelada de frutas', grupo: 'Azúcares', porcion: '2 1/2 cucharaditas', kcal: 40, prot: 0, carb: 10, gras: 0, fibra: 0.2, calcio: 3, hierro: 0.1, potasio: 13, sodio: 5, vitC: 1, vitD: 0, b12: 0 },
   // ── Marcas comerciales (datos de etiqueta, aproximados, por porción) ──
   { id: 'cornflakes', nombre: 'Corn Flakes (Kelloggs)', grupo: 'Marcas comerciales', porcion: '30 g (3/4 taza)', kcal: 110, prot: 2, carb: 25, gras: 0.2, fibra: 0.7, calcio: 5, hierro: 8, potasio: 35, sodio: 200, vitC: 6, vitD: 1, b12: 0.6 },
-  { id: 'zucaritas', nombre: 'Zucaritas', grupo: 'Marcas comerciales', porcion: '30 g (3/4 taza)', kcal: 110, prot: 1, carb: 26, gras: 0.1, fibra: 0.5, calcio: 2, hierro: 4.5, potasio: 25, sodio: 150, vitC: 6, vitD: 1, b12: 0.5 },
-  { id: 'avenaquaker', nombre: 'Avena instantánea (Quaker, sobre)', grupo: 'Marcas comerciales', porcion: '1 sobre (35 g)', kcal: 130, prot: 4, carb: 27, gras: 2, fibra: 3, calcio: 105, hierro: 3.9, potasio: 120, sodio: 80, vitC: 0, vitD: 0, b12: 0 },
+  { id: 'avenaquaker', nombre: 'Avena instantánea (sobre)', grupo: 'Marcas comerciales', porcion: '1 sobre (35 g)', kcal: 130, prot: 4, carb: 27, gras: 2, fibra: 3, calcio: 105, hierro: 3.9, potasio: 120, sodio: 80, vitC: 0, vitD: 0, b12: 0 },
   { id: 'panbimbo', nombre: 'Pan Bimbo blanco', grupo: 'Marcas comerciales', porcion: '1 rebanada', kcal: 74, prot: 2.4, carb: 13.6, gras: 1, fibra: 0.7, calcio: 40, hierro: 0.9, potasio: 35, sodio: 135, vitC: 0, vitD: 0, b12: 0 },
   { id: 'panbimboint', nombre: 'Pan Bimbo integral', grupo: 'Marcas comerciales', porcion: '1 rebanada', kcal: 71, prot: 3, carb: 12, gras: 1.2, fibra: 1.7, calcio: 45, hierro: 0.9, potasio: 70, sodio: 130, vitC: 0, vitD: 0, b12: 0 },
   { id: 'galletaemperador', nombre: 'Galletas Emperador', grupo: 'Marcas comerciales', porcion: '2 piezas', kcal: 130, prot: 1, carb: 18, gras: 6, fibra: 0.5, calcio: 5, hierro: 0.5, potasio: 25, sodio: 85, vitC: 0, vitD: 0, b12: 0 },
@@ -122,7 +124,6 @@ export const ALIMENTOS = [
   { id: 'barrita', nombre: 'Barrita Marinela (fresa)', grupo: 'Marcas comerciales', porcion: '1 pieza', kcal: 150, prot: 2, carb: 25, gras: 5, fibra: 0.7, calcio: 15, hierro: 0.7, potasio: 40, sodio: 105, vitC: 0, vitD: 0, b12: 0 },
   { id: 'danone', nombre: 'Yogurt Danone con fruta', grupo: 'Marcas comerciales', porcion: '1 vaso (220 g)', kcal: 180, prot: 6, carb: 30, gras: 3.5, fibra: 0.5, calcio: 220, hierro: 0.1, potasio: 280, sodio: 105, vitC: 1, vitD: 0.8, b12: 0.6 },
   { id: 'yakult', nombre: 'Yakult', grupo: 'Marcas comerciales', porcion: '1 frasco (80 ml)', kcal: 65, prot: 1, carb: 15, gras: 0, fibra: 0, calcio: 30, hierro: 0, potasio: 40, sodio: 20, vitC: 0, vitD: 0, b12: 0.1 },
-  { id: 'cocacola', nombre: 'Coca-Cola', grupo: 'Marcas comerciales', porcion: '1 lata (355 ml)', kcal: 149, prot: 0, carb: 37.5, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 15, vitC: 0, vitD: 0, b12: 0 },
   { id: 'refrescolight', nombre: 'Refresco light/zero', grupo: 'Marcas comerciales', porcion: '1 lata (355 ml)', kcal: 1, prot: 0, carb: 0, gras: 0, fibra: 0, calcio: 0, hierro: 0, potasio: 0, sodio: 40, vitC: 0, vitD: 0, b12: 0 },
   { id: 'jugodelvalle', nombre: 'Jugo del Valle (néctar)', grupo: 'Marcas comerciales', porcion: '1 vaso (250 ml)', kcal: 110, prot: 0, carb: 27, gras: 0, fibra: 0.3, calcio: 5, hierro: 0.2, potasio: 90, sodio: 10, vitC: 30, vitD: 0, b12: 0 },
   { id: 'electrolit', nombre: 'Electrolit', grupo: 'Marcas comerciales', porcion: '1 botella (625 ml)', kcal: 140, prot: 0, carb: 34, gras: 0, fibra: 0, calcio: 10, hierro: 0, potasio: 90, sodio: 285, vitC: 0, vitD: 0, b12: 0 },

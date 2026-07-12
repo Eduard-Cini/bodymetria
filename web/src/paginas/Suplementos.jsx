@@ -105,12 +105,12 @@ export default function Suplementos() {
         <ul style={{ margin: '0 0 0.6rem' }}>
           <li><strong>Energía rápida:</strong> un plátano con un poco de crema de avellanas antes de entrenar.</li>
           <li><strong>Creatina</strong> (esa sí vale la pena: 3-5 g al día).</li>
-          <li><strong>Óxido nítrico natural:</strong> la parte blanca de la sandía, agua de jamaica sin azúcar y betabel.</li>
+          <li><strong>Óxido nítrico natural:</strong> la parte blanca de la sandía, agua de jamaica con algo de azúcar y betabel.</li>
         </ul>
         <p style={{ marginBottom: 0 }}>
-          Dicho esto, los pre-entrenos <strong>sin estimulantes</strong> (citrulina,
+          Dicho esto, los pre-entrenos <strong>sin estimulantes</strong> (con citrulina,
           beta-alanina) también son una alternativa válida si te gustan — solo que no
-          son imprescindibles ni superiores a la opción del mercado.
+          son imprescindibles.
         </p>
       </div>
 

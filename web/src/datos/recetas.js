@@ -106,11 +106,39 @@ export const RECETAS = [
 ]
 
 // Ensalada cruda DIARIA: acompaña todos los planes, para cualquier objetivo.
-// Es la garantía de micronutrientes (potasio, vitamina C, fibra, hierro).
-export const ENSALADA = {
-  id: 'ensalada-diaria', nombre: 'Ensalada cruda del día (fija)',
-  ingredientes: [['espinaca', 1], ['jitomate', 1], ['zanahoria', 1], ['pepino', 1], ['aguacate', 1]],
-  extras: ['limón', 'sal mínima'],
+// Es la garantía de micronutrientes vegetales (hierro, calcio, folato,
+// potasio, vitamina C y A). Rota cada semana (misma semilla del menú).
+export const ENSALADAS = [
+  {
+    id: 'ens-verde', nombre: 'Ensalada verde con amaranto y ajonjolí',
+    ingredientes: [['espinaca', 1], ['lechuga', 1], ['jitomate', 1], ['zanahoria', 1], ['aguacate', 1], ['amaranto', 1], ['ajonjoli', 1], ['aceiteoliva', 1]],
+    extras: ['limón', 'sal mínima'],
+  },
+  {
+    id: 'ens-kale', nombre: 'Ensalada de kale y garbanzo',
+    ingredientes: [['kale', 1], ['jitomate', 1], ['pepino', 1], ['cebolla', 0.5], ['garbanzo', 0.5], ['ajonjoli', 1], ['aceiteoliva', 1]],
+    extras: ['limón', 'orégano'],
+  },
+  {
+    id: 'ens-berro', nombre: 'Ensalada de berro, nopal y aguacate',
+    ingredientes: [['berro', 1], ['nopal', 1], ['jitomate', 1], ['aguacate', 1], ['ajonjoli', 1], ['aceiteoliva', 1]],
+    extras: ['limón', 'chile'],
+  },
+  {
+    id: 'ens-fresa', nombre: 'Ensalada de espinaca, fresa y nuez',
+    ingredientes: [['espinaca', 1], ['lechuga', 1], ['fresa', 1], ['nuez', 1], ['ajonjoli', 1], ['aceiteoliva', 1]],
+    extras: ['limón'],
+  },
+  {
+    id: 'ens-mixta', nombre: 'Ensalada mixta con amaranto y pepitas',
+    ingredientes: [['lechuga', 1], ['espinaca', 1], ['zanahoria', 1], ['pepino', 1], ['jitomate', 1], ['amaranto', 1], ['pepitas', 1], ['aguacate', 1], ['aceiteoliva', 1]],
+    extras: ['limón', 'sal mínima'],
+  },
+]
+
+/** La ensalada de la semana (rota con la semilla del menú). */
+export function ensaladaSemana(semilla) {
+  return ENSALADAS[Math.abs(Math.floor(semilla)) % ENSALADAS.length]
 }
 
 /** Suma kcal, macros y micros de una receta a partir de sus raciones. */

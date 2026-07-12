@@ -11,7 +11,7 @@ export const ACTIVIDADES = [
 ]
 
 export const OBJETIVOS = [
-  { clave: 'longevidad', nombre: 'Longevidad (énfasis vegetal)', ajuste: 0.92, proteinaPorKg: 1.2, grasaPct: 0.3 },
+  { clave: 'longevidad', nombre: 'Longevidad', ajuste: 0.92, proteinaPorKg: 1.2, grasaPct: 0.3 },
   { clave: 'perdida', nombre: 'Pérdida de grasa', ajuste: 0.8, proteinaPorKg: 2.0, grasaPct: 0.25 },
   { clave: 'ganancia', nombre: 'Ganancia de músculo', ajuste: 1.1, proteinaPorKg: 1.8, grasaPct: 0.25 },
   { clave: 'general', nombre: 'General (mantenimiento)', ajuste: 1.0, proteinaPorKg: 1.4, grasaPct: 0.3 },

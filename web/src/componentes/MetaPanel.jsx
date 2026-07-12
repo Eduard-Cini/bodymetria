@@ -40,9 +40,8 @@ export default function MetaPanel({ onCambio }) {
           <strong>Tu perfil</strong>
           <div className="mini">
             Para calcular tu meta usamos <strong>Mifflin-St Jeor</strong> (el índice
-            estándar en nutrición y el mismo de la app) por tu peso, estatura, edad y
-            sexo; × factor de actividad; ajustado por objetivo (p. ej. +10% ganancia,
-            −20% pérdida, −8% longevidad).
+            estándar en nutrición) ajustado a nivel de actividad y por objetivo
+            (p. ej. +10% ganancia, −20% pérdida, −8% longevidad).
           </div>
           <div className="fila" style={{ marginTop: '0.6rem' }}>
             <select value={perfil.sexo} onChange={(e) => campo('sexo', e.target.value)}>
