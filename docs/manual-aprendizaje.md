@@ -182,7 +182,33 @@ Esta app se construyó SIN Android Studio, para entender las piezas:
   demostrar lo contrario.
 - Borrados con confirmación en toda la app.
 
-## 11. Glosario rápido
+## 11. El sitio web: React, Vite y localStorage
+
+El sitio (`web/`) es la otra mitad del proyecto: complementa a la app con la
+base de alimentos, el menú y las guías. Comparte la filosofía: **todo local, sin
+servidor**. Piezas clave:
+
+- **React**: librería de UI declarativa (el equivalente web de Compose). La
+  interfaz se describe con componentes que devuelven "JSX" (HTML dentro de
+  JavaScript); cuando el estado cambia, React re-renderiza solo lo necesario.
+- **Componentes y props**: funciones que devuelven UI y reciben datos por
+  parámetros. Cada página (`Alimentos`, `Recetas`, `Micros`…) es un componente.
+- **useState / useMemo / useEffect**: los "hooks". `useState` guarda estado que
+  al cambiar redibuja (como `mutableStateOf` en Compose); `useMemo` memoriza
+  cálculos caros; `useEffect` corre efectos (p. ej. guardar en localStorage).
+- **localStorage**: el "Room" del navegador — un almacén clave-valor por sitio.
+  Ahí viven el perfil y el registro del día; nada sale del navegador.
+- **Vite**: el empaquetador/servidor de desarrollo (el "Gradle" del front):
+  `npm run dev` levanta el sitio con recarga en caliente; `npm run build` genera
+  la carpeta `dist/` estática.
+- **React Router (HashRouter)**: navegación por rutas del lado del cliente; el
+  hash (`#/recetas`) evita necesitar configuración de servidor.
+- **El cálculo nutricional**: las recetas no guardan calorías "a mano" — cada
+  ingrediente referencia la base (`[idAlimento, raciones]`) y kcal/macros/micros
+  se SUMAN de ahí. Así, corregir un alimento arregla todas las recetas que lo
+  usan (una sola fuente de verdad, el mismo principio que un DAO).
+
+## 12. Glosario rápido
 
 - **APK / AAB**: paquete instalable / paquete de publicación.
 - **adb**: Android Debug Bridge, la CLI para hablar con el dispositivo.
@@ -198,12 +224,16 @@ Esta app se construyó SIN Android Studio, para entender las piezas:
 - **RPE**: esfuerzo percibido (1-10).
 - **SAF**: Storage Access Framework (selector de archivos del sistema).
 - **Upsert**: insertar-o-actualizar.
+- **Hook**: función de React (useState, useEffect…) que "engancha" estado o
+  efectos a un componente.
+- **localStorage**: almacén clave-valor del navegador, por sitio.
 
-## 12. Para seguir aprendiendo
+## 13. Para seguir aprendiendo
 
 - Kotlin: kotlinlang.org/docs (oficial, excelente).
 - Compose: developer.android.com/develop/ui/compose (codelabs).
 - Room: developer.android.com/training/data-storage/room.
-- El propio código: cada pantalla de `ui/pantallas/` es corta y sigue el mismo
-  patrón (estado, formulario, guardar, estadísticas, gráfica, historial);
-  leer `PantallaDiario.kt` primero es la mejor puerta de entrada.
+- React: react.dev/learn (tutorial oficial); Vite: vitejs.dev/guide.
+- El propio código: cada pantalla de `ui/pantallas/` (app) y cada página de
+  `web/src/paginas/` sigue el mismo patrón; leer `PantallaDiario.kt` y
+  `web/src/paginas/Alimentos.jsx` primero es la mejor puerta de entrada.

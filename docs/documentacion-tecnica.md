@@ -1,9 +1,11 @@
-# Bodymetria — Documentación técnica (v1)
+# Bodymetria — Documentación técnica
 
-App Android nativa de registro de vida saludable. Fase 1: captura manual,
-gráficas y métricas estadísticas; todo local, sin servidor. Este documento
-describe QUÉ se construyó y POR QUÉ; el `manual-aprendizaje.pdf` explica las
-tecnologías desde cero.
+Proyecto de dos piezas: una **app Android nativa** para registrar la vida
+saludable (captura manual, gráficas y métricas estadísticas; todo local, sin
+servidor) y un **sitio web** complementario (base de alimentos, recetas y guías).
+Este documento describe QUÉ se construyó y POR QUÉ; el `manual-aprendizaje.pdf`
+explica las tecnologías desde cero y `aprendizajes-proyecto.pdf` recoge lo que
+aprendimos en el camino.
 
 ## 1. Principios de diseño
 
@@ -170,11 +172,45 @@ genérica parametrizada para estrés/agua/lectura/meditación/ánimo/regla).
   confirmación cubren integridad; la privacidad del archivo exportado queda en
   manos del usuario.
 
-## 11. Roadmap
+## 11. Sitio web (`web/`)
+
+Complemento estático a la app, en React 19 + Vite (mismo espíritu: todo local,
+datos en `localStorage`, sin servidor). Enrutado con HashRouter (funciona en
+cualquier hosting sin reglas de redirección) y `base: './'`.
+
+- **Base de alimentos** (`web/src/datos/alimentos.js`): valores POR RACIÓN según
+  la Guía de Alimentos para la Población Mexicana (IMSS) — los macros son el
+  promedio del grupo de equivalentes — más marcas comerciales por etiqueta;
+  micronutrientes aproximados (USDA). El usuario también agrega alimentos propios
+  capturados POR 100 g (como la etiqueta NOM-051) + gramos de la porción.
+- **Perfil y metas** (`datos/perfil.js`): Mifflin-St Jeor × factor de actividad ×
+  ajuste por objetivo — los mismos parámetros que la app, guardados en localStorage.
+- **Recetas** (`datos/recetas.js`): ~65 platillos (mexicanos e internacionales
+  adaptados) + 9 postres, cada uno como lista `[idAlimento, raciones]`; kcal,
+  macros y micros se CALCULAN de la base, no se inventan. El menú semanal rota
+  solo (semilla = semana ISO) y escala cada día a la meta con un factor continuo
+  (0.7–3) para que ningún día se pase. Ensalada cruda diaria que también rota.
+- **Micros** (`datos/micros.js`): guía de 16 micronutrientes con rango (con
+  dirección: mínimo, o tope para el sodio), función, evidencia científica y
+  fuentes naturales.
+- **Suplementos** y **Sueño**: contenido con evidencia (papers citados); la
+  calculadora de sueño usa ciclos de ~90 min como heurístico, con el punto óptimo
+  en 7-8 h.
+
+## 12. Despliegue
+
+- **GitHub**: repo público `Eduard-Cini/bodymetria` (rama `main`).
+- **Netlify**: conectado al repo (despliegue continuo). La config vive en
+  `netlify.toml` en la RAÍZ (Netlify la lee desde ahí): `base = "web"`,
+  `publish = "dist"` (relativo a base), `command = "npm run build"`.
+- **APK**: NO viaja en el repo (17 MB, en `.gitignore`). Se publica como *release*
+  de GitHub (`v0.1`) y el botón de descarga apunta a
+  `releases/latest/download/bodymetria.apk` (siempre la última).
+
+## 13. Roadmap
 
 - v1.1: tiempos de app automáticos (UsageStatsManager), Health Connect.
-- Sitio web: base de alimentos con micros, generador de recetas semanales,
-  recomendaciones de sueño, distribución del APK.
+- App: sincronizar el catálogo de metas/alimentos con el del sitio.
 - Play Store: keystore de release, AAB, ficha, política de privacidad, prueba
   cerrada de 14 días con ~12 testers.
 - Análisis de mercado para decidir iOS (Compose Multiplatform reutilizaría casi

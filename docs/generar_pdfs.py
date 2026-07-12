@@ -123,10 +123,15 @@ if __name__ == "__main__":
     generar(
         "documentacion-tecnica.md",
         "Documentación técnica",
-        "Arquitectura, modelo de datos, metas y decisiones (v1)",
+        "Arquitectura, datos, metas, sitio web y despliegue",
     )
     generar(
         "manual-aprendizaje.md",
         "Manual de aprendizaje",
-        "De Kotlin y Android a todo lo que implementa la app",
+        "De Kotlin y Android a React: todo lo que implementa el proyecto",
+    )
+    generar(
+        "aprendizajes-proyecto.md",
+        "Lo que aprendimos",
+        "Retrospectiva y lecciones de construir Bodymetria",
     )
