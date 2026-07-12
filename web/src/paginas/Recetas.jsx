@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ensaladaSemana, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
+import { ensaladaSemana, POSTRES, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
 import { NUTRIENTES, MICROS_APP, rangoDe } from '../datos/alimentos.js'
 import { calcularMetas, cargarPerfil } from '../datos/perfil.js'
 import MetaPanel from '../componentes/MetaPanel.jsx'
@@ -191,6 +191,31 @@ export default function Recetas() {
           </div>
         )
       })}
+
+      <h2>Postres saludables (opcional)</h2>
+      <p className="mini">
+        Si te queda margen de calorías, elige uno. No se suman al total del día
+        (ese ya cuadra con las 3 comidas + ensalada); aquí solo como referencia.
+      </p>
+      <div className="rejilla">
+        {POSTRES.map((p) => {
+          const t = calcularReceta(p)
+          return (
+            <div className="tarjeta" key={p.id}>
+              <div className="fila" style={{ justifyContent: 'space-between' }}>
+                <strong>{p.nombre}</strong>
+                <span className="pastilla">{fmt(t.kcal)} kcal</span>
+              </div>
+              <p className="mini" style={{ margin: '0.3rem 0 0' }}>
+                P {fmt(t.prot)} · C {fmt(t.carb)} · G {fmt(t.gras)} g
+              </p>
+              <ul className="mini" style={{ margin: '0.3rem 0 0' }}>
+                {ingredientesLegibles(p).map((ing) => <li key={ing}>{ing}</li>)}
+              </ul>
+            </div>
+          )
+        })}
+      </div>
     </>
   )
 }

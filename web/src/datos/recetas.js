@@ -334,6 +334,68 @@ export const RECETAS = [
     ingredientes: [['garbanzo', 2], ['pan', 1], ['pepino', 1], ['zanahoria', 1], ['aceiteoliva', 1], ['ajonjoli', 1]],
     extras: ['limón', 'ajo'],
   },
+
+  // ── Más cocina del mundo ──
+  {
+    id: 'bibimbap', nombre: 'Bibimbap (coreana)', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['arroz', 2], ['bistec', 3], ['espinaca', 1], ['zanahoria', 1], ['champinon', 0.5], ['huevo', 1], ['ajonjoli', 1]],
+    extras: ['salsa de soya', 'ajo'],
+  },
+  {
+    id: 'curry-tailandes', nombre: 'Curry tailandés de pollo', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['pollo', 4], ['arroz', 2], ['brocoli', 1], ['zanahoria', 1], ['lechesoya', 0.5]],
+    extras: ['curry', 'leche de coco', 'jengibre'],
+  },
+  {
+    id: 'chowmein', nombre: 'Chow mein de verduras y pollo (china)', tiempo: 'comida',
+    objetivos: ['general', 'perdida'],
+    ingredientes: [['pasta', 2], ['pollo', 3], ['brocoli', 1], ['zanahoria', 1], ['champinon', 0.5], ['ajonjoli', 1]],
+    extras: ['salsa de soya'],
+  },
+  {
+    id: 'burrito-bowl', nombre: 'Burrito bowl de pollo', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['arroz', 2], ['frijol', 1], ['pollo', 3], ['aguacate', 1], ['jitomate', 1], ['lechuga', 1]],
+  },
+  {
+    id: 'pescado-empapelado', nombre: 'Pescado empapelado con verduras', tiempo: 'comida',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['pescado', 4], ['calabacita', 1], ['jitomate', 1], ['zanahoria', 1], ['aceiteoliva', 1]],
+    extras: ['limón'],
+  },
+  {
+    id: 'falafel', nombre: 'Falafel con pan y ensalada (árabe)', tiempo: 'cena',
+    objetivos: ['longevidad', 'perdida'],
+    ingredientes: [['garbanzo', 2], ['pan', 1], ['pepino', 1], ['jitomate', 1], ['ajonjoli', 1]],
+    extras: ['ajo', 'perejil'],
+  },
+  {
+    id: 'tortilla-espanola', nombre: 'Tortilla española de papa', tiempo: 'cena',
+    objetivos: ['general'],
+    ingredientes: [['huevo', 2], ['papa', 2], ['cebolla', 0.5], ['aceiteoliva', 1]],
+  },
+  {
+    id: 'sopa-fideo', nombre: 'Sopa de fideo con verduras', tiempo: 'cena',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['pasta', 1], ['jitomate', 1], ['zanahoria', 1], ['calabacita', 1]],
+    extras: ['cebolla', 'ajo'],
+  },
+]
+
+// Postres SALUDABLES. Se muestran como referencia (no se suman al total del
+// día, que ya cuadra con las 3 comidas + ensalada); elige uno si te queda margen.
+export const POSTRES = [
+  { id: 'nieve-platano', nombre: 'Nieve de plátano y cacao', ingredientes: [['platano', 2]], extras: ['cacao en polvo'] },
+  { id: 'yogurt-postre', nombre: 'Yogurt con fruta y avena', ingredientes: [['yogurtlight', 1], ['fresa', 1], ['avena', 0.5], ['nuez', 1]] },
+  { id: 'chia-pudding', nombre: 'Chía pudding con mango', ingredientes: [['chia', 1], ['lechesoya', 1], ['mango', 1]] },
+  { id: 'manzana-horno', nombre: 'Manzana al horno con nuez', ingredientes: [['manzana', 1], ['nuez', 1]], extras: ['canela'] },
+  { id: 'fresas-crema', nombre: 'Fresas con crema', ingredientes: [['fresa', 1], ['crema', 1]] },
+  { id: 'alegria', nombre: 'Alegría de amaranto con miel', ingredientes: [['amaranto', 1], ['miel', 1]] },
+  { id: 'arroz-leche', nombre: 'Arroz con leche', ingredientes: [['arroz', 1], ['lechedesc', 1]], extras: ['canela', 'poca azúcar'] },
+  { id: 'pan-platano', nombre: 'Pan tostado con plátano y crema de avellana', ingredientes: [['pan', 1], ['platano', 1], ['cremacacahuate', 1]] },
+  { id: 'mango-coco', nombre: 'Mango con chía y coco', ingredientes: [['mango', 1], ['chia', 1]], extras: ['coco rallado'] },
 ]
 
 // Ensalada cruda DIARIA: acompaña todos los planes, para cualquier objetivo.
