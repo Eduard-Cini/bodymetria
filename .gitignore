@@ -9,3 +9,6 @@ captures/
 .cxx/
 *.apk
 *.aab
+
+# Archivo de contexto local, no se publica
+CLAUDE.md

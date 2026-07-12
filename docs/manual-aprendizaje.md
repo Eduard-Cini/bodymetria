@@ -145,10 +145,10 @@ Esta app se construyó SIN Android Studio, para entender las piezas:
 - Trampa de ESTA red: TLS interceptado — la JVM necesita
   `javax.net.ssl.trustStoreType=Windows-ROOT` (ya fijado en gradle.properties)
   y curl `--ssl-no-revoke`. Si algo no descarga, casi seguro es esto.
-- Trampa de ESTE entorno: la app de escritorio de Claude virtualiza escrituras
-  fuera del proyecto (MSIX). Lo instalado en AppData desde sus comandos puede
-  quedar en `AppData\Local\Packages\Claude_...\LocalCache` y ser invisible
-  para el resto del sistema; se resolvió moviendo el SDK al disco real.
+- Trampa de ESTE entorno: algunas apps de escritorio empaquetadas (MSIX)
+  virtualizan las escrituras en AppData. Lo instalado ahí puede quedar en una
+  carpeta `LocalCache` del paquete e invisible para el resto del sistema; se
+  resolvió moviendo el SDK al disco real.
 
 ## 9. Los algoritmos de la app
 
