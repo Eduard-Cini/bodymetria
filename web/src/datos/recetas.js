@@ -228,6 +228,112 @@ export const RECETAS = [
     ingredientes: [['elote', 2], ['panela', 1]],
     extras: ['limón', 'chile', 'mayonesa'],
   },
+
+  // ── Cocina internacional adaptada con ingredientes sustituibles.
+  // Lo especial (nori, salsa de soya, azafrán, albahaca, curry) va en "extras". ──
+  // Desayunos
+  {
+    id: 'sando-fruta', nombre: 'Sándwich de fruta (estilo japonés)', tiempo: 'desayuno',
+    objetivos: ['general'],
+    ingredientes: [['panbimbo', 2], ['fresa', 1], ['platano', 0.5], ['yogurt', 1]],
+  },
+  {
+    id: 'shakshuka', nombre: 'Shakshuka (huevos en salsa de jitomate)', tiempo: 'desayuno',
+    objetivos: ['perdida', 'general'],
+    ingredientes: [['huevo', 2], ['jitomate', 1], ['chilepoblano', 0.5], ['pan', 1], ['garbanzo', 0.5]],
+    extras: ['cebolla', 'comino'],
+  },
+  // Comidas
+  {
+    id: 'pasta-pollo', nombre: 'Pasta al pomodoro con pollo (italiana)', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['pasta', 3], ['jitomate', 1.5], ['pollo', 3], ['aceiteoliva', 1], ['manchego', 0.5]],
+    extras: ['albahaca', 'ajo'],
+  },
+  {
+    id: 'pizza', nombre: 'Pizza casera de verduras y jamón (italiana)', tiempo: 'comida',
+    objetivos: ['general'],
+    ingredientes: [['tortillaharina', 3], ['jitomate', 1], ['mozzarella', 1.5], ['champinon', 0.5], ['jamonpavo', 1]],
+    extras: ['orégano'],
+  },
+  {
+    id: 'ramen', nombre: 'Ramen saludable de pollo (japonesa)', tiempo: 'comida',
+    objetivos: ['general', 'perdida'],
+    ingredientes: [['pasta', 2], ['pollo', 3], ['huevo', 1], ['espinaca', 1], ['champinon', 0.5], ['elote', 0.5]],
+    extras: ['salsa de soya', 'jengibre'],
+  },
+  {
+    id: 'teriyaki', nombre: 'Pollo teriyaki con arroz (japonesa)', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['pollo', 4], ['arroz', 2], ['brocoli', 1], ['ajonjoli', 1]],
+    extras: ['salsa de soya', 'miel'],
+  },
+  {
+    id: 'poke-atun', nombre: 'Tazón de atún y arroz (poke)', tiempo: 'comida',
+    objetivos: ['perdida', 'ganancia'],
+    ingredientes: [['arroz', 2], ['atun', 4], ['aguacate', 1], ['pepino', 1], ['soya', 0.5]],
+    extras: ['salsa de soya', 'ajonjolí'],
+  },
+  {
+    id: 'california', nombre: 'Rollitos California (japonesa)', tiempo: 'comida',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['arroz', 2], ['camaron', 2], ['aguacate', 1], ['pepino', 1]],
+    extras: ['alga nori', 'salsa de soya'],
+  },
+  {
+    id: 'arroz-persa', nombre: 'Arroz persa con pollo y almendra', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['arroz', 3], ['pollo', 3], ['zanahoria', 1], ['almendra', 1]],
+    extras: ['azafrán', 'pasas'],
+  },
+  {
+    id: 'curry-garbanzo', nombre: 'Curry de garbanzo con arroz (india)', tiempo: 'comida',
+    objetivos: ['longevidad'],
+    ingredientes: [['garbanzo', 2], ['jitomate', 1], ['espinaca', 1], ['arroz', 2], ['aceiteoliva', 1]],
+    extras: ['curry', 'ajo', 'jengibre'],
+  },
+  {
+    id: 'hamburguesa', nombre: 'Hamburguesa casera con ensalada', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['pan', 2], ['molida', 3], ['lechuga', 1], ['jitomate', 1], ['oaxaca', 1]],
+    extras: ['cebolla', 'mostaza'],
+  },
+  {
+    id: 'wrap-pollo', nombre: 'Wrap de pollo con frijol y aguacate', tiempo: 'comida',
+    objetivos: ['ganancia', 'general', 'perdida'],
+    ingredientes: [['tortillaharina', 2], ['pollo', 3], ['frijol', 1], ['lechuga', 1], ['aguacate', 1]],
+  },
+  {
+    id: 'stir-fry-tofu', nombre: 'Salteado de tofu y verduras con arroz (asiática)', tiempo: 'comida',
+    objetivos: ['longevidad', 'perdida'],
+    ingredientes: [['tofu', 3], ['brocoli', 1], ['zanahoria', 1], ['champinon', 0.5], ['arroz', 2], ['ajonjoli', 1]],
+    extras: ['salsa de soya', 'ajo'],
+  },
+  // Cenas
+  {
+    id: 'caprese', nombre: 'Ensalada caprese con pan (italiana)', tiempo: 'cena',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['jitomate', 2], ['mozzarella', 1.5], ['pan', 1], ['aceiteoliva', 1]],
+    extras: ['albahaca'],
+  },
+  {
+    id: 'minestrone', nombre: 'Minestrone (sopa de verduras y pasta)', tiempo: 'cena',
+    objetivos: ['longevidad', 'perdida'],
+    ingredientes: [['frijol', 1], ['zanahoria', 1], ['calabacita', 1], ['jitomate', 1], ['pasta', 1]],
+    extras: ['ajo', 'albahaca'],
+  },
+  {
+    id: 'griega', nombre: 'Ensalada griega', tiempo: 'cena',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['lechuga', 1], ['pepino', 1], ['jitomate', 1], ['panela', 1], ['aceiteoliva', 1]],
+    extras: ['aceituna', 'orégano'],
+  },
+  {
+    id: 'hummus', nombre: 'Hummus con pan y verduras (árabe)', tiempo: 'cena',
+    objetivos: ['longevidad', 'perdida'],
+    ingredientes: [['garbanzo', 2], ['pan', 1], ['pepino', 1], ['zanahoria', 1], ['aceiteoliva', 1], ['ajonjoli', 1]],
+    extras: ['limón', 'ajo'],
+  },
 ]
 
 // Ensalada cruda DIARIA: acompaña todos los planes, para cualquier objetivo.
