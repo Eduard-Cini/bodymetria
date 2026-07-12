@@ -106,7 +106,7 @@ export default function Alimentos() {
       <div className="tarjeta">
         <input
           style={{ width: '100%' }}
-          placeholder="Busca un alimento… (tortilla, frijol, zucaritas, coca)"
+          placeholder="Busca un alimento… (tortilla, frijol, avena, guayaba)"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />

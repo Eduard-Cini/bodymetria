@@ -95,9 +95,11 @@ export default function Recetas() {
 
       {semana.map((dia, i) => {
         const kcalComidas = TIEMPOS.reduce((acc, t) => acc + calcularReceta(dia[t]).kcal, 0)
-        // Escala las comidas (no la ensalada) hacia la meta, entre ×1 y ×2.5 en pasos de 0.5.
+        // Escala las comidas (no la ensalada) para que CADA día caiga en tu meta.
+        // Factor continuo (a 0.1 de precisión) para no pasarte ni quedarte corto;
+        // acotado entre ×0.7 y ×3 por si la meta es muy baja o muy alta.
         const factor = metas
-          ? Math.min(2.5, Math.max(1, Math.round(((metas.kcal - ensalada.kcal) / kcalComidas) * 2) / 2))
+          ? Math.min(3, Math.max(0.7, Math.round(((metas.kcal - ensalada.kcal) / kcalComidas) * 10) / 10))
           : 1
         const totalDia = {}
         for (const n of NUTRIENTES) totalDia[n.clave] = ensalada[n.clave]
