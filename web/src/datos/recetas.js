@@ -103,6 +103,131 @@ export const RECETAS = [
     objetivos: ['perdida', 'longevidad'],
     ingredientes: [['yogurtlight', 1], ['guayaba', 1], ['pepitas', 1]],
   },
+
+  // ── Platillos mexicanos (mapeados a equivalentes IMSS; se omiten
+  // aromáticos como limón, cebolla, ajo y cilantro, que van en "extras"). ──
+  // Desayunos
+  {
+    id: 'chilaquiles', nombre: 'Chilaquiles verdes con huevo', tiempo: 'desayuno',
+    objetivos: ['general', 'ganancia'],
+    ingredientes: [['tortilla', 3], ['huevo', 2], ['salsa', 1], ['oaxaca', 1], ['frijol', 1]],
+    extras: ['cebolla', 'crema'],
+  },
+  {
+    id: 'huevos-mexicana', nombre: 'Huevos a la mexicana con frijoles', tiempo: 'desayuno',
+    objetivos: ['perdida', 'general'],
+    ingredientes: [['huevo', 2], ['jitomate', 1], ['tortilla', 2], ['frijol', 1]],
+    extras: ['cebolla', 'chile'],
+  },
+  {
+    id: 'toast-aguacate', nombre: 'Pan integral con aguacate y huevo', tiempo: 'desayuno',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['panbimboint', 2], ['huevo', 2], ['aguacate', 1]],
+    extras: ['limón', 'chile'],
+  },
+  {
+    id: 'enfrijoladas', nombre: 'Enfrijoladas con panela', tiempo: 'desayuno',
+    objetivos: ['longevidad', 'general'],
+    ingredientes: [['tortilla', 3], ['frijol', 2], ['panela', 1]],
+    extras: ['cebolla', 'crema'],
+  },
+  {
+    id: 'machaca', nombre: 'Machaca con huevo y tortillas de harina', tiempo: 'desayuno',
+    objetivos: ['ganancia'],
+    ingredientes: [['bistec', 2], ['huevo', 2], ['jitomate', 1], ['tortillaharina', 2]],
+    extras: ['cebolla'],
+  },
+  // Comidas
+  {
+    id: 'tinga', nombre: 'Tinga de pollo con arroz', tiempo: 'comida',
+    objetivos: ['ganancia', 'general', 'perdida'],
+    ingredientes: [['pollo', 4], ['jitomate', 1], ['chilepoblano', 0.5], ['arroz', 2], ['tortilla', 1]],
+    extras: ['cebolla'],
+  },
+  {
+    id: 'enchiladas', nombre: 'Enchiladas verdes de pollo', tiempo: 'comida',
+    objetivos: ['general', 'ganancia'],
+    ingredientes: [['tortilla', 3], ['pollo', 3], ['salsa', 1], ['panela', 1]],
+    extras: ['cebolla', 'crema'],
+  },
+  {
+    id: 'fajitas', nombre: 'Fajitas de res con tortillas', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['bistec', 4], ['chilepoblano', 0.5], ['cebolla', 0.5], ['tortilla', 2], ['aguacate', 1]],
+  },
+  {
+    id: 'ceviche', nombre: 'Ceviche de pescado con tostadas', tiempo: 'comida',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['pescado', 4], ['jitomate', 1], ['pepino', 1], ['aguacate', 1], ['tostada', 2]],
+    extras: ['limón', 'cebolla', 'cilantro'],
+  },
+  {
+    id: 'caldo-pollo', nombre: 'Caldo de pollo con verduras y arroz', tiempo: 'comida',
+    objetivos: ['perdida', 'general', 'longevidad'],
+    ingredientes: [['pollo', 3], ['zanahoria', 1], ['calabacita', 1], ['chayote', 1], ['arroz', 1]],
+  },
+  {
+    id: 'tacos-pescado', nombre: 'Tacos de pescado con col', tiempo: 'comida',
+    objetivos: ['perdida', 'longevidad'],
+    ingredientes: [['tortilla', 3], ['pescado', 3], ['lechuga', 1], ['jitomate', 1], ['aguacate', 1]],
+    extras: ['limón'],
+  },
+  {
+    id: 'albondigas', nombre: 'Albóndigas de res en caldillo', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['molida', 3], ['arroz', 1], ['jitomate', 1], ['calabacita', 1]],
+    extras: ['cebolla'],
+  },
+  {
+    id: 'chiles-rellenos', nombre: 'Chiles rellenos de queso', tiempo: 'comida',
+    objetivos: ['general'],
+    ingredientes: [['chilepoblano', 2], ['oaxaca', 1.5], ['huevo', 1], ['jitomate', 1], ['arroz', 1]],
+  },
+  {
+    id: 'salmon-verduras', nombre: 'Salmón con arroz y brócoli', tiempo: 'comida',
+    objetivos: ['longevidad', 'ganancia'],
+    ingredientes: [['salmon', 4], ['arroz', 2], ['brocoli', 2], ['aceiteoliva', 1]],
+  },
+  {
+    id: 'milanesa', nombre: 'Milanesa de pollo con ensalada', tiempo: 'comida',
+    objetivos: ['ganancia', 'general'],
+    ingredientes: [['pollo', 4], ['pan', 1], ['papa', 1], ['lechuga', 1], ['jitomate', 1]],
+  },
+  // Cenas
+  {
+    id: 'huevos-rancheros', nombre: 'Huevos rancheros con frijoles', tiempo: 'cena',
+    objetivos: ['general', 'perdida'],
+    ingredientes: [['tortilla', 2], ['huevo', 2], ['salsa', 1], ['frijol', 1]],
+  },
+  {
+    id: 'sopa-lentejas', nombre: 'Sopa de lentejas', tiempo: 'cena',
+    objetivos: ['longevidad', 'perdida'],
+    ingredientes: [['lenteja', 2], ['zanahoria', 0.5], ['jitomate', 0.5], ['tortilla', 1]],
+    extras: ['cebolla'],
+  },
+  {
+    id: 'ensalada-pollo', nombre: 'Ensalada de pollo', tiempo: 'cena',
+    objetivos: ['perdida', 'ganancia'],
+    ingredientes: [['pollo', 3], ['lechuga', 1], ['jitomate', 1], ['pepino', 1], ['aguacate', 1]],
+    extras: ['limón'],
+  },
+  {
+    id: 'tacos-papa', nombre: 'Tacos dorados de papa', tiempo: 'cena',
+    objetivos: ['general', 'longevidad'],
+    ingredientes: [['tortilla', 3], ['papa', 2], ['lechuga', 1], ['salsa', 0.5]],
+    extras: ['crema'],
+  },
+  {
+    id: 'tostadas-tinga', nombre: 'Tostadas de tinga de pollo', tiempo: 'cena',
+    objetivos: ['perdida', 'general'],
+    ingredientes: [['tostada', 2], ['pollo', 3], ['jitomate', 1], ['lechuga', 1], ['aguacate', 1]],
+  },
+  {
+    id: 'esquites', nombre: 'Esquites con panela', tiempo: 'cena',
+    objetivos: ['general', 'longevidad'],
+    ingredientes: [['elote', 2], ['panela', 1]],
+    extras: ['limón', 'chile', 'mayonesa'],
+  },
 ]
 
 // Ensalada cruda DIARIA: acompaña todos los planes, para cualquier objetivo.
