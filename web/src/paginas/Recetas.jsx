@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ensaladaSemana, POSTRES, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
+import { ensaladaSemana, esInternacional, POSTRES, RECETAS, calcularReceta, ingredientesLegibles } from '../datos/recetas.js'
 import { NUTRIENTES, MICROS_APP, rangoDe } from '../datos/alimentos.js'
 import { calcularMetas, cargarPerfil } from '../datos/perfil.js'
 import MetaPanel from '../componentes/MetaPanel.jsx'
@@ -20,11 +20,17 @@ function generarSemana(objetivo, semilla) {
       ? propias
       : RECETAS.filter((r) => r.tiempo === tiempo && (r.objetivos.includes(objetivo) || r.objetivos.includes('general')))
   }
+  // Máximo UNA receta internacional por semana: solo un slot (de 21) la permite.
+  const slotInternacional = Math.floor(azar() * 21)
+  let slot = 0
   return DIAS.map(() => {
     const dia = {}
     for (const t of TIEMPOS) {
-      const opciones = pool(t)
+      const todas = pool(t)
+      const nacionales = todas.filter((r) => !esInternacional(r))
+      const opciones = slot === slotInternacional || nacionales.length === 0 ? todas : nacionales
       dia[t] = opciones[Math.floor(azar() * opciones.length)]
+      slot++
     }
     return dia
   })
@@ -94,13 +100,23 @@ export default function Recetas() {
       </div>
 
       {semana.map((dia, i) => {
-        const kcalComidas = TIEMPOS.reduce((acc, t) => acc + calcularReceta(dia[t]).kcal, 0)
         // Escala las comidas (no la ensalada) para que CADA día caiga en tu meta.
-        // Factor continuo (a 0.1 de precisión) para no pasarte ni quedarte corto;
-        // acotado entre ×0.7 y ×3 por si la meta es muy baja o muy alta.
-        const factor = metas
-          ? Math.min(3, Math.max(0.7, Math.round(((metas.kcal - ensalada.kcal) / kcalComidas) * 10) / 10))
-          : 1
+        // Con los topes por ingrediente la relación ya no es lineal, así que el
+        // factor se encuentra por búsqueda binaria (kcal(factor) es monótona).
+        const kcalConFactor = (f) =>
+          TIEMPOS.reduce((acc, t) => acc + calcularReceta(dia[t], f).kcal, 0)
+        let factor = 1
+        if (metas) {
+          const objetivoComidas = metas.kcal - ensalada.kcal
+          let lo = 0.7
+          let hi = 3
+          for (let i = 0; i < 24; i++) {
+            const mid = (lo + hi) / 2
+            if (kcalConFactor(mid) < objetivoComidas) lo = mid
+            else hi = mid
+          }
+          factor = Math.round(((lo + hi) / 2) * 10) / 10
+        }
         const totalDia = {}
         for (const n of NUTRIENTES) totalDia[n.clave] = ensalada[n.clave]
         for (const t of TIEMPOS) {
@@ -117,7 +133,12 @@ export default function Recetas() {
                 <span className="pastilla">
                   ≈ {fmt(totalDia.kcal)} kcal{metas ? ` de ${fmt(metas.kcal)}` : ''}
                 </span>
-                <span className="pastilla">P {fmt(totalDia.prot)} g</span>
+                <span className="pastilla">P {fmt(totalDia.prot)}</span>
+                <span className="pastilla">C {fmt(totalDia.carb)}</span>
+                <span className="pastilla">G {fmt(totalDia.gras)} g</span>
+                {metas && totalDia.kcal < metas.kcal * 0.93 && (
+                  <span className="pastilla alerta">corto: agrega un postre o colación</span>
+                )}
               </span>
             </div>
             <table>
@@ -165,7 +186,9 @@ export default function Recetas() {
                       </ul>
                     )}
                   </td>
-                  <td className="num mini">{fmt(ensalada.kcal)} kcal</td>
+                  <td className="num mini">
+                    {fmt(ensalada.kcal)} kcal · P {fmt(ensalada.prot)} C {fmt(ensalada.carb)} G {fmt(ensalada.gras)}
+                  </td>
                 </tr>
               </tbody>
             </table>

@@ -46,9 +46,9 @@ export const RECETAS = [
     ingredientes: [['pollo', 4], ['arroz', 2], ['jitomate', 0.5], ['pepino', 0.5], ['aceiteoliva', 1]],
   },
   {
-    id: 'lentejas-guisadas', nombre: 'Lentejas guisadas con verdura y tortillas', tiempo: 'comida',
+    id: 'lentejas-guisadas', nombre: 'Lentejas guisadas con huevo y tortillas', tiempo: 'comida',
     objetivos: ['longevidad', 'general'],
-    ingredientes: [['lenteja', 2], ['zanahoria', 0.5], ['jitomate', 0.5], ['cebolla', 0.5], ['tortilla', 2], ['aguacate', 1]],
+    ingredientes: [['lenteja', 2], ['huevo', 1], ['zanahoria', 0.5], ['jitomate', 0.5], ['cebolla', 0.5], ['tortilla', 2], ['aguacate', 1]],
   },
   {
     id: 'pescado-verduras', nombre: 'Pescado al horno con camote y brócoli', tiempo: 'comida',
@@ -56,9 +56,9 @@ export const RECETAS = [
     ingredientes: [['pescado', 4], ['camote', 2], ['brocoli', 2], ['aceiteoliva', 1]],
   },
   {
-    id: 'tacos-frijol', nombre: 'Tacos de frijol con nopales y aguacate', tiempo: 'comida',
+    id: 'tacos-frijol', nombre: 'Tacos de frijol con nopales y panela', tiempo: 'comida',
     objetivos: ['longevidad'],
-    ingredientes: [['tortilla', 3], ['frijol', 2], ['nopal', 1], ['aguacate', 1], ['salsa', 1]],
+    ingredientes: [['tortilla', 3], ['frijol', 2], ['panela', 1], ['nopal', 1], ['aguacate', 1], ['salsa', 1]],
   },
   {
     id: 'res-papas', nombre: 'Bistec de res con papas y calabacitas', tiempo: 'comida',
@@ -66,9 +66,9 @@ export const RECETAS = [
     ingredientes: [['bistec', 4], ['papa', 2], ['calabacita', 2], ['aceiteoliva', 1]],
   },
   {
-    id: 'garbanzo-ensalada', nombre: 'Ensalada grande de garbanzo', tiempo: 'comida',
+    id: 'garbanzo-ensalada', nombre: 'Ensalada grande de garbanzo y atún', tiempo: 'comida',
     objetivos: ['longevidad', 'perdida'],
-    ingredientes: [['garbanzo', 2], ['jitomate', 1], ['pepino', 1], ['cebolla', 0.5], ['aceiteoliva', 1]],
+    ingredientes: [['garbanzo', 2], ['atun', 2], ['jitomate', 1], ['pepino', 1], ['cebolla', 0.5], ['aceiteoliva', 1]],
     extras: ['limón', 'orégano'],
   },
   // ── Cenas ──
@@ -200,9 +200,9 @@ export const RECETAS = [
     ingredientes: [['tortilla', 2], ['huevo', 2], ['salsa', 1], ['frijol', 1]],
   },
   {
-    id: 'sopa-lentejas', nombre: 'Sopa de lentejas', tiempo: 'cena',
+    id: 'sopa-lentejas', nombre: 'Sopa de lentejas con huevo', tiempo: 'cena',
     objetivos: ['longevidad', 'perdida'],
-    ingredientes: [['lenteja', 2], ['zanahoria', 0.5], ['jitomate', 0.5], ['tortilla', 1]],
+    ingredientes: [['lenteja', 2], ['huevo', 1], ['zanahoria', 0.5], ['jitomate', 0.5], ['tortilla', 1]],
     extras: ['cebolla'],
   },
   {
@@ -287,9 +287,9 @@ export const RECETAS = [
     extras: ['azafrán', 'pasas'],
   },
   {
-    id: 'curry-garbanzo', nombre: 'Curry de garbanzo con arroz (india)', tiempo: 'comida',
+    id: 'curry-garbanzo', nombre: 'Curry de garbanzo y tofu con arroz (india)', tiempo: 'comida',
     objetivos: ['longevidad'],
-    ingredientes: [['garbanzo', 2], ['jitomate', 1], ['espinaca', 1], ['arroz', 2], ['aceiteoliva', 1]],
+    ingredientes: [['garbanzo', 2], ['tofu', 1.5], ['jitomate', 1], ['espinaca', 1], ['arroz', 2], ['aceiteoliva', 1]],
     extras: ['curry', 'ajo', 'jengibre'],
   },
   {
@@ -434,26 +434,74 @@ export function ensaladaSemana(semilla) {
   return ENSALADAS[Math.abs(Math.floor(semilla)) % ENSALADAS.length]
 }
 
-/** Suma kcal, macros y micros de una receta a partir de sus raciones. */
+// ── Topes de porciones por grupo: al escalar hacia la meta, ningún
+// ingrediente crece a cantidades absurdas (p. ej. 3.6 raciones de lentejas).
+// El tope es el MÁXIMO de raciones tras escalar; si la receta ya trae más de
+// base, se respeta la base.
+const TOPES_GRUPO = {
+  Leguminosas: 2.5,
+  Cereales: 3,
+  'Cereales con grasa': 2,
+  Verduras: 3,
+  Frutas: 3,
+  Leche: 1.5,
+  'Leche entera': 1.5,
+  Grasas: 2,
+  'Grasas con proteína': 2,
+  Azúcares: 1.5,
+  'Marcas comerciales': 2,
+  'Mis alimentos': 3,
+}
+
+function topeDe(a) {
+  // Origen animal: raciones de 30-40 g; 6 raciones ≈ 180-240 g, razonable.
+  if (a.grupo.startsWith('Origen animal')) return 6
+  return TOPES_GRUPO[a.grupo] ?? 3
+}
+
+function racionesEfectivas(a, raciones, factor) {
+  return Math.min(raciones * factor, Math.max(raciones, topeDe(a)))
+}
+
+/**
+ * Suma kcal, macros y micros de una receta. El factor escala las porciones
+ * hacia la meta, pero cada ingrediente respeta su tope realista.
+ */
 export function calcularReceta(receta, factor = 1) {
   const total = {}
   for (const n of NUTRIENTES) total[n.clave] = 0
   for (const [id, raciones] of receta.ingredientes) {
     const a = POR_ID[id]
     if (!a) continue
-    for (const n of NUTRIENTES) total[n.clave] += (a[n.clave] || 0) * raciones * factor
+    const r = racionesEfectivas(a, raciones, factor)
+    for (const n of NUTRIENTES) total[n.clave] += (a[n.clave] || 0) * r
   }
   return total
 }
 
-/** Lista legible de ingredientes ("Lentejas cocidas: 2 raciones (1/2 taza c/u)"). */
+const fmt0 = (v) => Number(v.toFixed(0)).toLocaleString('es-MX')
+
+/** Lista legible de ingredientes con sus macros ya escalados y topados. */
 export function ingredientesLegibles(receta, factor = 1) {
   const lineas = receta.ingredientes.map(([id, raciones]) => {
     const a = POR_ID[id]
     if (!a) return id
-    const r = raciones * factor
+    const r = racionesEfectivas(a, raciones, factor)
     const cant = Number(r.toFixed(1)).toLocaleString('es-MX')
-    return `${a.nombre}: ${cant} ración${r !== 1 ? 'es' : ''} (${a.porcion} c/u)`
+    const macros = `${fmt0(a.kcal * r)} kcal · P ${fmt0(a.prot * r)} C ${fmt0(a.carb * r)} G ${fmt0(a.gras * r)}`
+    return `${a.nombre}: ${cant} ${r !== 1 ? 'raciones' : 'ración'} (${a.porcion} c/u) — ${macros}`
   })
   return [...lineas, ...(receta.extras ?? []).map((e) => `${e} (al gusto)`)]
+}
+
+// ── Recetas internacionales: máximo UNA por semana en el menú. ──
+const INTERNACIONALES = new Set([
+  'sando-fruta', 'shakshuka', 'pasta-pollo', 'pizza', 'ramen', 'teriyaki',
+  'poke-atun', 'california', 'arroz-persa', 'curry-garbanzo', 'hamburguesa',
+  'stir-fry-tofu', 'caprese', 'minestrone', 'griega', 'hummus', 'bibimbap',
+  'curry-tailandes', 'chowmein', 'falafel', 'tortilla-espanola',
+])
+
+export function esInternacional(receta) {
+  return INTERNACIONALES.has(receta.id)
 }
