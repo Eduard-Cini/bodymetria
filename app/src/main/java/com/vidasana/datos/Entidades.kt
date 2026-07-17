@@ -121,6 +121,21 @@ object TipoDiario {
     const val VERDURAS = "verduras"    // porciones de verdura al día (proxy de micros)
 }
 
+/**
+ * Protocolo de dieta baja en FODMAP (dentro de la sección Doctor). Todo su
+ * estado vive en `diario` — sin cambios de esquema y entra en el respaldo:
+ * - FASE: la fecha del registro más reciente marca el inicio de la fase actual
+ *   (valor 1 = eliminación, 2 = reintroducción, 3 = personalización).
+ * - SINTOMAS: severidad digestiva del día, escala 1-10.
+ * - PREFIJO_RETO + grupo: resultado del reto de reintroducción de ese grupo
+ *   (0 = tolerado, 1 = síntomas leves, 2 = disparador).
+ */
+object TipoFodmap {
+    const val FASE = "fodmap.fase"
+    const val SINTOMAS = "fodmap.sintomas"
+    const val PREFIJO_RETO = "fodmap.reto."
+}
+
 // ── Sección 9: uso del celular por app ───────────────────────────────
 @Serializable
 @Entity(tableName = "uso_apps", primaryKeys = ["fecha", "app"])

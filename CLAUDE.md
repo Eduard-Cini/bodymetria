@@ -30,6 +30,12 @@ Además (v1):
 - `doctor` — métricas médicas definidas por el usuario (tabla metricas_medicas,
   v3; valores en `diario` como "med.<id>"); SOLO visible si se activa el switch
   en Configuración (perfil.seccionMedica).
+- `fodmap` — protocolo de dieta baja en FODMAP (acceso por tarjeta dentro de
+  Doctor): etapa actual, síntomas diarios 1-10 y resultado de los 8 retos de
+  reintroducción. TODO su estado vive en `diario` (tipos "fodmap.fase",
+  "fodmap.sintomas", "fodmap.reto.<grupo>") — sin cambios de esquema y entra al
+  respaldo tal cual. Listas de alimentos, menú de 7 días con recetas y dosis de
+  los retos: en el sitio web (página FODMAP).
 - `consejos` — estático, papers reales resumidos como asociaciones; acceso por
   el foco de la barra superior.
 - Metas (datos/Metas.kt): kcal/macros por Mifflin-St Jeor ×1.3 + media real de
@@ -50,8 +56,11 @@ React 19 + Vite, estático (HashRouter, base './'), localStorage. Páginas: Inic
 (descarga del APK desde `web/public/bodymetria.apk` — COPIAR ahí el APK nuevo en
 cada release), Alimentos (raciones de la Guía IMSS en `src/datos/alimentos.js`,
 macros = promedio del grupo, micros aproximados; totales para pasar a la app),
-Recetas (menú semanal por semilla), Sueño (ciclos + papers). Comandos:
-`npm run dev` / `npm run build` en `web/`. Preview: launch.json "bodymetria-web".
+Recetas (menú semanal por semilla), Sueño (ciclos + papers), FODMAP (protocolo
+de 3 etapas para SII: listas altos/bajos, menú de eliminación de 7 días con
+recetas mexicanas y calendario de reintroducción; datos en `src/datos/fodmap.js`).
+Comandos: `npm run dev` / `npm run build` en `web/`. Preview: launch.json
+"bodymetria-web".
 
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto

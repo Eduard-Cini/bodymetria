@@ -53,6 +53,23 @@ export const PAPERS = [
     ],
   },
   {
+    seccion: 'Digestivo: dieta baja en FODMAP',
+    refs: [
+      { ref: 'Gibson PR, Shepherd SJ. J Gastroenterol Hepatol, 2010.', tema: 'El enfoque FODMAP original (Monash University).' },
+      { ref: 'Muir JG, et al. J Agric Food Chem, 2007 y 2009.', tema: 'Medición del contenido FODMAP de los alimentos (base de las porciones).' },
+      { ref: 'Halmos EP, et al. Gastroenterology, 2014.', tema: 'Ensayo controlado: la dieta baja en FODMAP reduce los síntomas del SII.' },
+      { ref: 'Böhn L, et al. Gastroenterology, 2015.', tema: 'Baja en FODMAP vs consejo dietético tradicional en SII (eficacia comparable).' },
+      { ref: 'Eswaran SL, et al. Am J Gastroenterol, 2016.', tema: 'Ensayo en SII con diarrea: mejora de dolor y evacuaciones.' },
+      { ref: 'Black CJ, et al. Gut, 2022.', tema: 'Meta-análisis en red: la baja en FODMAP es la dieta mejor clasificada para SII.' },
+      { ref: 'Whelan K, et al. J Hum Nutr Diet, 2018.', tema: 'El protocolo de 3 etapas: eliminación, reintroducción y personalización.' },
+      { ref: 'Tuck C, Barrett J. J Gastroenterol Hepatol, 2017.', tema: 'Cómo hacer los retos de reintroducción (dosis crecientes y lavado).' },
+      { ref: 'Staudacher HM, et al. J Nutr, 2012; Gastroenterology, 2017.', tema: 'La eliminación prolongada reduce bifidobacterias: no quedarse en la etapa 1.' },
+      { ref: 'O’Keeffe M, et al. Neurogastroenterol Motil, 2018.', tema: 'Seguimiento a largo plazo: la dieta personalizada mantiene el beneficio.' },
+      { ref: 'Bellini M, et al. Nutrients, 2020.', tema: 'Limitaciones y adecuación nutricional de la dieta en el mundo real.' },
+      { ref: 'Lacy BE, et al. Gastroenterology, 2016 (Roma IV).', tema: 'Criterios diagnósticos del síndrome de intestino irritable.' },
+    ],
+  },
+  {
     seccion: 'Sueño',
     refs: [
       { ref: 'Cappuccio FP, et al. Sleep, 2010.', tema: 'Duración del sueño y mortalidad (óptimo 7-8 h).' },

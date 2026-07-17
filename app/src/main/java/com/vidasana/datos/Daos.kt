@@ -95,6 +95,8 @@ interface DiarioDao {
     @Query("SELECT * FROM diario WHERE tipo = :tipo ORDER BY fecha DESC")
     fun porTipo(tipo: String): Flow<List<ValorDiario>>
     @Query("SELECT * FROM diario WHERE fecha = :fecha") fun delDia(fecha: String): Flow<List<ValorDiario>>
+    @Query("SELECT * FROM diario WHERE tipo LIKE :prefijo || '%' ORDER BY fecha DESC")
+    fun porPrefijo(prefijo: String): Flow<List<ValorDiario>>
     @Query("SELECT DISTINCT texto FROM diario WHERE tipo = :tipo AND texto != '' ORDER BY texto")
     suspend fun textosUsados(tipo: String): List<String>
     @Query("SELECT * FROM diario ORDER BY fecha") suspend fun exportar(): List<ValorDiario>

@@ -99,6 +99,15 @@ private val CONSEJOS = listOf(
         "Bavishi A, Slade MD, Levy BR. A chapter a day. Soc Sci Med, 2016.",
     ),
     Consejo(
+        "Digestión",
+        "¿Intestino irritable? La dieta baja en FODMAP es el estándar",
+        "En ensayos controlados, reducir los carbohidratos fermentables (FODMAP) " +
+            "mejora dolor e inflamación en ~50-75% de personas con SII; en meta-análisis " +
+            "en red es la dieta mejor clasificada. Se hace por etapas y de forma temporal " +
+            "(protocolo completo en Doctor → Dieta FODMAP y en el sitio web).",
+        "Halmos EP, et al. Gastroenterology, 2014; Black CJ, et al. Gut, 2022.",
+    ),
+    Consejo(
         "Pantallas",
         "Modera el tiempo de pantalla",
         "Más horas de pantalla se asocian con menor bienestar psicológico en jóvenes; " +

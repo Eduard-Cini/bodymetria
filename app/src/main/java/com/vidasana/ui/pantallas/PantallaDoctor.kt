@@ -93,6 +93,24 @@ fun PantallaDoctor(nav: NavHostController) {
     var agregando by remember { mutableStateOf(false) }
 
     MarcoPantalla("Doctor", nav) {
+        // Acceso al protocolo de dieta baja en FODMAP (SII).
+        Card(onClick = { nav.navigate("fodmap") }, modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    "Dieta baja en FODMAP →",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    "Protocolo por etapas para intestino irritable: eliminación, " +
+                        "retos de reintroducción y registro de síntomas.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
         SelectorFecha(fecha) { fecha = it }
 
         if (metricas.isEmpty()) {
