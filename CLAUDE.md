@@ -73,9 +73,13 @@ cada release), Alimentos (raciones de la Guía IMSS en `src/datos/alimentos.js`,
 macros = promedio del grupo, micros aproximados; totales para pasar a la app),
 Recetas (menú semanal por semilla), Sueño (ciclos + papers), FODMAP (protocolo
 de 3 etapas para SII: listas altos/bajos, menú de eliminación de 7 días con
-recetas mexicanas y calendario de reintroducción; datos en `src/datos/fodmap.js`).
-Comandos: `npm run dev` / `npm run build` en `web/`. Preview: launch.json
-"bodymetria-web".
+recetas mexicanas y calendario de reintroducción; datos en `src/datos/fodmap.js`),
+Entrenos (12 programas de entrenamiento por categoría — gym HIT/volumen/torso-
+pierna, calistenia por habilidad plancha/pino/front lever/bandera, movilidad,
+flexibilidad, estética, glúteo, fullbody 2d — + 8 protocolos de cardio y
+principios; datos en `src/datos/rutinas.js`; cada día se guarda como rutina en
+la app). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
+launch.json "bodymetria-web".
 
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto

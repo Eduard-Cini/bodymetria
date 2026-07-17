@@ -40,6 +40,21 @@ export const PAPERS = [
     ],
   },
   {
+    seccion: 'Entrenamiento: rutinas y cardio',
+    refs: [
+      { ref: 'Androulakis-Korakakis P, et al. Sports Med, 2020.', tema: 'Dosis mínima efectiva de fuerza (base del programa HIT bajo volumen).' },
+      { ref: 'Schoenfeld BJ, et al. Sports Med, 2016.', tema: 'Frecuencia: 2×/semana por músculo rinde igual o mejor que 1× (splits).' },
+      { ref: 'Plotkin DL, et al. 2023 (preprint/Peer J).', tema: 'Hip thrust y sentadilla crecen el glúteo de forma similar: combinarlos.' },
+      { ref: 'Nemoto K, et al. Mayo Clin Proc, 2007.', tema: 'Protocolo japonés: caminata por intervalos 3+3 min y condición física.' },
+      { ref: 'Seiler S. Int J Sports Physiol Perform, 2010.', tema: 'Distribución polarizada del cardio: mucha zona 2, poca alta intensidad.' },
+      { ref: 'Milanović Z, et al. Sports Med, 2015.', tema: 'HIIT mejora el VO₂máx más que el continuo moderado.' },
+      { ref: 'Gibala MJ, et al. J Physiol, 2012.', tema: 'Sprints (SIT): adaptaciones grandes con volumen mínimo.' },
+      { ref: 'Markovic G. Br J Sports Med, 2007.', tema: 'Pliometría y salto vertical.' },
+      { ref: 'Thomas E, et al. Int J Sports Med, 2018.', tema: 'Dosis semanal de estiramiento y ganancia de rango (flexibilidad).' },
+      { ref: 'Behm DG, et al. Appl Physiol Nutr Metab, 2016.', tema: 'Estiramiento estático largo justo antes de explosivo: pequeño costo agudo.' },
+    ],
+  },
+  {
     seccion: 'Suplementación',
     refs: [
       { ref: 'Kreider RB, et al. J Int Soc Sports Nutr, 2017.', tema: 'Creatina: eficacia y seguridad.' },
