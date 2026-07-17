@@ -86,7 +86,12 @@ flexibilidad, estética, glúteo, fullbody 2d — + 8 protocolos de cardio,
 principios y PLANEACIÓN: mesociclo de 4 semanas con descarga (MESOCICLO),
 planes anuales por objetivo músculo/fuerza/calistenia/correr con mes de inicio
 elegible (PLANES_ANUALES) y progresión realista por nivel; datos en
-`src/datos/rutinas.js`; cada día se guarda como rutina en la app). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
+`src/datos/rutinas.js`; cada día se guarda como rutina en la app),
+Tendones (fortalecimiento de tendones: principios de carga, 4 fases
+isométrico→HSR y protocolos por tendinopatía rotuliana/aquíleo/codo/hombro/
+muñeca; `src/datos/tendones.js`), Tiroides (tips de hipotiroidismo: adherencia
+a levotiroxina, dieta/suplementos con cuidado del yodo, estilo de vida;
+educativo, sin dosis; `src/datos/tiroides.js`). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
 launch.json "bodymetria-web".
 
 ## Arquitectura

@@ -99,6 +99,26 @@ private val CONSEJOS = listOf(
         "Bavishi A, Slade MD, Levy BR. A chapter a day. Soc Sci Med, 2016.",
     ),
     Consejo(
+        "Tendones",
+        "Los tendones se fortalecen con carga, no con reposo",
+        "En tendinopatías (rodilla, Aquiles, codo), programas de carga progresiva " +
+            "—isométricos para el dolor y fuerza pesada lenta para reconstruir— superan " +
+            "al reposo. El tendón se adapta más lento que el músculo: sube la carga poco " +
+            "a poco y tolera molestia leve (≤3-4/10) que no empeora al día siguiente. " +
+            "Protocolos por zona en el sitio web (Tendones).",
+        "Cook JL, Purdam CR. Br J Sports Med, 2009; Kongsgaard M, et al. 2009.",
+    ),
+    Consejo(
+        "Tiroides",
+        "Hipotiroidismo: la levotiroxina funciona si se absorbe bien",
+        "Tómala a diario a la misma hora, en ayunas 30-60 min antes del desayuno y " +
+            "lejos del café, el calcio y el hierro (sepáralos varias horas). No la " +
+            "suspendas al sentirte bien ni te suplementes yodo por tu cuenta (en " +
+            "Hashimoto el exceso puede empeorar). La dosis SIEMPRE la ajusta tu médico " +
+            "con tu TSH. Más tips en el sitio web (Tiroides).",
+        "Jonklaas J, et al. (ATA). Thyroid, 2014; Benvenga S, et al. 2008.",
+    ),
+    Consejo(
         "Digestión",
         "¿Intestino irritable? La dieta baja en FODMAP es el estándar",
         "En ensayos controlados, reducir los carbohidratos fermentables (FODMAP) " +

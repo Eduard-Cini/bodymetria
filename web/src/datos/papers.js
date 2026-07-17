@@ -70,6 +70,27 @@ export const PAPERS = [
     ],
   },
   {
+    seccion: 'Tendones y tendinopatías',
+    refs: [
+      { ref: 'Cook JL, Purdam CR. Br J Sports Med, 2009.', tema: 'Modelo del continuum de la tendinopatía (base del manejo por fases).' },
+      { ref: 'Rio E, et al. Br J Sports Med, 2015.', tema: 'Isométricos y analgesia en tendinopatía rotuliana.' },
+      { ref: 'Kongsgaard M, et al. Scand J Med Sci Sports, 2009.', tema: 'Heavy slow resistance (HSR) en tendón rotuliano.' },
+      { ref: 'Beyer R, et al. Am J Sports Med, 2015.', tema: 'HSR vs excéntrico en tendón de Aquiles (ambos funcionan).' },
+      { ref: 'Alfredson H, et al. Am J Sports Med, 1998.', tema: 'Protocolo excéntrico clásico para Aquiles.' },
+      { ref: 'Silbernagel KG, et al. J Orthop Sports Phys Ther, 2020.', tema: 'Rehabilitación de tendinopatía guiada por síntomas.' },
+    ],
+  },
+  {
+    seccion: 'Hipotiroidismo',
+    refs: [
+      { ref: 'Jonklaas J, et al. (ATA). Thyroid, 2014.', tema: 'Guía de tratamiento del hipotiroidismo con levotiroxina.' },
+      { ref: 'Bolk N, et al. Arch Intern Med, 2010.', tema: 'Levotiroxina nocturna vs matutina: mejor absorción de noche.' },
+      { ref: 'Benvenga S, et al. Thyroid, 2008.', tema: 'El café reduce la absorción de la levotiroxina.' },
+      { ref: 'Winther KH, et al. Nat Rev Endocrinol, 2020.', tema: 'Selenio en enfermedad tiroidea autoinmune: evidencia mixta.' },
+      { ref: 'Leung AM, Braverman LE. Nat Rev Endocrinol, 2014.', tema: 'El exceso de yodo puede inducir o empeorar la disfunción tiroidea.' },
+    ],
+  },
+  {
     seccion: 'Digestivo: dieta baja en FODMAP',
     refs: [
       { ref: 'Gibson PR, Shepherd SJ. J Gastroenterol Hepatol, 2010.', tema: 'El enfoque FODMAP original (Monash University).' },
