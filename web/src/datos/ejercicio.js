@@ -132,6 +132,19 @@ export const EJERCICIO_POR_OBJETIVO = [
           'déficit sin matarte de hambre.',
         fuente: 'Levine JA. Best Pract Res Clin Endocrinol Metab, 2002 (revisión de NEAT).',
       },
+      {
+        titulo: 'Pero el cuerpo compensa: el ejercicio no es cheque en blanco',
+        texto:
+          'En un estudio reciente con 34 pastores seminómadas daasanach (Kenia), ' +
+          'su gasto energético diario total fue prácticamente el mismo que el de ' +
+          'poblaciones industrializadas y NO se correlacionó con su actividad física, ' +
+          'mucho mayor. Encaja con el "modelo de gasto restringido": el cuerpo ' +
+          'compensa el ejercicio recortando energía en otras funciones, así que a ' +
+          'largo plazo moverte más no eleva tu gasto total tanto como dice la ' +
+          'calculadora. Conclusión: el déficit se gana sobre todo en la cocina; el ' +
+          'ejercicio vale por el músculo y la salud, no como permiso para comer de más.',
+        fuente: 'McGrosky A, et al. (incl. Pontzer H). Ann Hum Biol, 2024 (agua doblemente marcada).',
+      },
     ],
   },
 ]

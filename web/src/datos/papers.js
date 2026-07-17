@@ -37,6 +37,7 @@ export const PAPERS = [
       { ref: 'Longland TM, et al. Am J Clin Nutr, 2016.', tema: 'Recomposición: déficit + proteína alta + fuerza.' },
       { ref: 'Willis LH, et al. J Appl Physiol, 2012.', tema: 'Aeróbico vs fuerza vs combinado.' },
       { ref: 'Levine JA. Best Pract Res Clin Endocrinol Metab, 2002.', tema: 'NEAT: actividad no-ejercicio y gasto.' },
+      { ref: 'McGrosky A, et al. (incl. Pontzer H). Ann Hum Biol, 2024.', tema: 'Gasto restringido: pastores seminómadas daasanach gastan lo mismo que poblaciones industrializadas pese a moverse mucho más.' },
     ],
   },
   {
