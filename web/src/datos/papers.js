@@ -52,6 +52,8 @@ export const PAPERS = [
       { ref: 'Markovic G. Br J Sports Med, 2007.', tema: 'Pliometría y salto vertical.' },
       { ref: 'Thomas E, et al. Int J Sports Med, 2018.', tema: 'Dosis semanal de estiramiento y ganancia de rango (flexibilidad).' },
       { ref: 'Behm DG, et al. Appl Physiol Nutr Metab, 2016.', tema: 'Estiramiento estático largo justo antes de explosivo: pequeño costo agudo.' },
+      { ref: 'Williams TD, et al. Sports Med, 2017.', tema: 'Periodizar (variar cargas por bloques) gana a no periodizar para 1RM.' },
+      { ref: 'Bell L, et al. Front Sports Act Living, 2022.', tema: 'La descarga programada como práctica estándar en fuerza y físico.' },
     ],
   },
   {

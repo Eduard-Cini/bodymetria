@@ -53,6 +53,12 @@ Además (v1):
 - Gráficas con rango elegible (30/90/180/365 días) vía desplegable compacto en
   el encabezado de la propia gráfica (estado interno de GraficaBase; los call
   sites no cambian). PanelEstadisticas sigue fijo en 7/30 días.
+- Recordatorio diario (Recordatorios.kt): switch + hora en Configuración
+  (perfil.recordatorio / horaRecordatorio); AlarmManager INEXACTO diario →
+  ReceptorRecordatorio (notificación local, canal "recordatorio") y
+  ReceptorArranque reprograma en BOOT_COMPLETED / MY_PACKAGE_REPLACED.
+  POST_NOTIFICATIONS se pide al activar el switch (API 33+). Al importar un
+  respaldo se re-sincroniza la alarma con el perfil importado.
 - Metas (datos/Metas.kt): kcal/macros por Mifflin-St Jeor ×1.3 + media real de
   gasto por ejercicio 7d; prioridad pérdida>ganancia>longevidad (longevidad =
   déficit 8%, proteína 1.2 g/kg CON ÉNFASIS VEGETAL, nota de mucha verdura);
@@ -76,9 +82,11 @@ de 3 etapas para SII: listas altos/bajos, menú de eliminación de 7 días con
 recetas mexicanas y calendario de reintroducción; datos en `src/datos/fodmap.js`),
 Entrenos (12 programas de entrenamiento por categoría — gym HIT/volumen/torso-
 pierna, calistenia por habilidad plancha/pino/front lever/bandera, movilidad,
-flexibilidad, estética, glúteo, fullbody 2d — + 8 protocolos de cardio y
-principios; datos en `src/datos/rutinas.js`; cada día se guarda como rutina en
-la app). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
+flexibilidad, estética, glúteo, fullbody 2d — + 8 protocolos de cardio,
+principios y PLANEACIÓN: mesociclo de 4 semanas con descarga (MESOCICLO),
+planes anuales por objetivo músculo/fuerza/calistenia/correr con mes de inicio
+elegible (PLANES_ANUALES) y progresión realista por nivel; datos en
+`src/datos/rutinas.js`; cada día se guarda como rutina en la app). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
 launch.json "bodymetria-web".
 
 ## Arquitectura

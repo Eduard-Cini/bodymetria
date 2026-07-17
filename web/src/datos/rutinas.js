@@ -465,6 +465,125 @@ export const CARDIO = [
   },
 ]
 
+// ── Planeación: el mes (mesociclo de 4 semanas) ────────────────────
+// Aplica a CUALQUIER programa de arriba: 3 semanas subiendo y 1 de descarga.
+export const MESOCICLO = [
+  {
+    semana: 1, nombre: 'Base', rir: 'RIR 3', volumen: 'Series normales',
+    texto: 'Entra cómodo: pesos que dominas con técnica limpia. Esta semana marca tu referencia del mes — apúntala en la app.',
+  },
+  {
+    semana: 2, nombre: 'Carga', rir: 'RIR 2', volumen: 'Series normales',
+    texto: 'Sube UN escalón donde se pueda: +1-2 repes o +2.5 kg respecto a la semana 1. No en todo a la vez; donde salga natural.',
+  },
+  {
+    semana: 3, nombre: 'Pico', rir: 'RIR 1-2', volumen: 'Series normales (+1 serie opcional en tus prioritarios)',
+    texto: 'La semana más dura del mes: busca superar tus marcas de la semana 2. Duerme y come acorde.',
+  },
+  {
+    semana: 4, nombre: 'Descarga', rir: 'RIR 4-5', volumen: 'MITAD de series y ~70% del peso',
+    texto: 'Mismos movimientos, la mitad del trabajo. No es opcional ni es flojera: es cuando el cuerpo consolida lo de las 3 semanas. Sal del gym sintiendo que pudiste hacer el doble.',
+  },
+]
+
+// ── Planeación: el año (bloques por objetivo) ──────────────────────
+// Reglas para cualquier plan: cada mes ES un mesociclo (semana 4 = descarga);
+// tras los meses 6 y 12, una semana totalmente libre; si la vida se atraviesa
+// (exámenes, viaje, enfermedad), REPITE el mes en lugar de avanzar el plan.
+export const PLANES_ANUALES = [
+  {
+    clave: 'musculo',
+    nombre: 'Músculo (hipertrofia)',
+    meses: [
+      { bloque: 'Volumen I', programa: 'Peso moderado, alto volumen', nota: 'Establece técnica y pesos de referencia.' },
+      { bloque: 'Volumen I', programa: 'Peso moderado, alto volumen', nota: 'Progresión doble en todo.' },
+      { bloque: 'Volumen I', programa: 'Peso moderado, alto volumen', nota: 'Cierra el bloque superando el mes 1.' },
+      { bloque: 'Fuerza', programa: 'Split torso / pierna — 4 días', nota: 'Cargas altas: el músculo nuevo aprende a empujar.' },
+      { bloque: 'Volumen II', programa: 'Peso moderado, alto volumen', nota: 'Regresas más fuerte: los pesos de volumen suben solos.' },
+      { bloque: 'Volumen II', programa: 'Peso moderado, alto volumen', nota: 'Al terminar: 1 SEMANA LIBRE completa.' },
+      { bloque: 'Volumen II', programa: 'Peso moderado, alto volumen', nota: 'Retoma con la semana Base, no con la de Pico.' },
+      { bloque: 'Fuerza', programa: 'Split torso / pierna — 4 días', nota: 'Segundo bloque pesado del año.' },
+      { bloque: 'Volumen III', programa: 'Peso moderado, alto volumen', nota: 'Cambia 2-3 accesorios para variar estímulo.' },
+      { bloque: 'Volumen III', programa: 'Peso moderado, alto volumen', nota: 'Mantén los básicos: solo rotan los accesorios.' },
+      { bloque: 'Volumen III', programa: 'Peso moderado, alto volumen', nota: 'El mes más productivo si respetaste descargas.' },
+      { bloque: 'Fuerza + cierre', programa: 'Split torso / pierna — 4 días', nota: 'Compara tus marcas vs enero en la app. 1 SEMANA LIBRE.' },
+    ],
+  },
+  {
+    clave: 'fuerza',
+    nombre: 'Fuerza (básicos)',
+    meses: [
+      { bloque: 'Base muscular', programa: 'Peso moderado, alto volumen', nota: 'El músculo es el motor de la fuerza: constrúyelo primero.' },
+      { bloque: 'Base muscular', programa: 'Peso moderado, alto volumen', nota: 'Técnica de básicos impecable a repes moderadas.' },
+      { bloque: 'Fuerza I', programa: 'Split torso / pierna — 4 días', nota: 'Días pesados a 5-8 repes: manda la barra.' },
+      { bloque: 'Fuerza I', programa: 'Split torso / pierna — 4 días', nota: 'Progresión lineal mientras dure.' },
+      { bloque: 'Fuerza I', programa: 'Split torso / pierna — 4 días', nota: 'Cierra el bloque con dobles y triples pesados.' },
+      { bloque: 'Pico', programa: 'Alta intensidad, bajo volumen (HIT)', nota: 'Poco volumen, mucha intensidad → prueba tus máximos. 1 SEMANA LIBRE.' },
+      { bloque: 'Base muscular II', programa: 'Peso moderado, alto volumen', nota: 'Descomprime articulaciones acumulando músculo.' },
+      { bloque: 'Base muscular II', programa: 'Peso moderado, alto volumen', nota: 'Sube el volumen donde te quedaste corto.' },
+      { bloque: 'Fuerza II', programa: 'Split torso / pierna — 4 días', nota: 'Arranca 5-10 kg arriba del bloque Fuerza I.' },
+      { bloque: 'Fuerza II', programa: 'Split torso / pierna — 4 días', nota: 'Las repes de reserva honestas evitan el estancamiento.' },
+      { bloque: 'Fuerza II', programa: 'Split torso / pierna — 4 días', nota: 'Última acumulación pesada del año.' },
+      { bloque: 'Pico + PRs', programa: 'Alta intensidad, bajo volumen (HIT)', nota: 'Máximos del año y comparación en la app. 1 SEMANA LIBRE.' },
+    ],
+  },
+  {
+    clave: 'calistenia',
+    nombre: 'Calistenia (habilidades)',
+    meses: [
+      { bloque: 'Pino', programa: 'Pino (handstand) + Fullbody 2 días', nota: 'El pino primero: es la base de equilibrio de todo lo demás.' },
+      { bloque: 'Pino', programa: 'Pino (handstand) + Fullbody 2 días', nota: 'Práctica corta y diaria > sesiones largas.' },
+      { bloque: 'Pino', programa: 'Pino (handstand) + Fullbody 2 días', nota: 'Meta del bloque: 15-30 s libre.' },
+      { bloque: 'Front lever', programa: 'Front lever + Fullbody 2 días', nota: 'El pino se mantiene con 2-3 prácticas/semana.' },
+      { bloque: 'Front lever', programa: 'Front lever + Fullbody 2 días', nota: 'Negativas lentas = tu mejor herramienta.' },
+      { bloque: 'Front lever', programa: 'Front lever + Fullbody 2 días', nota: 'Meta: tuck avanzado o straddle 5-10 s. 1 SEMANA LIBRE.' },
+      { bloque: 'Plancha', programa: 'Preparación para plancha + Fullbody 2 días', nota: 'La más lenta de todas: paciencia con muñecas y codos.' },
+      { bloque: 'Plancha', programa: 'Preparación para plancha + Fullbody 2 días', nota: 'Lean cada vez más adelante; graba tus holds.' },
+      { bloque: 'Plancha', programa: 'Preparación para plancha + Fullbody 2 días', nota: 'Meta: tuck sólido 10-15 s.' },
+      { bloque: 'Bandera', programa: 'Human flag + Fullbody 2 días', nota: 'Llega con el empuje/jalón fuertes de los bloques previos.' },
+      { bloque: 'Bandera', programa: 'Human flag + Fullbody 2 días', nota: 'Ambos lados, siempre.' },
+      { bloque: 'Bandera + repaso', programa: 'Human flag + Fullbody 2 días', nota: 'Filma las 4 habilidades y compara con enero. 1 SEMANA LIBRE.' },
+    ],
+  },
+  {
+    clave: 'correr',
+    nombre: 'Correr (resistencia)',
+    meses: [
+      { bloque: 'Base aeróbica', programa: 'Zona 2 + caminata diaria', nota: '3-4 salidas suaves; construye el hábito antes que el ritmo.' },
+      { bloque: 'Base aeróbica', programa: 'Zona 2 + rodaje largo', nota: 'Kilometraje +10% por semana como tope.' },
+      { bloque: 'Base aeróbica', programa: 'Zona 2 + rodaje largo', nota: 'Añade Fullbody 2 días: correr también se entrena en el gym.' },
+      { bloque: 'Ritmos', programa: 'Zona 2 + fartlek 1×/semana', nota: 'Primera intensidad del año, jugando, sin reloj.' },
+      { bloque: 'Ritmos', programa: 'Zona 2 + fartlek + saltos', nota: 'Pliometría ligera 2×/semana: piernas más elásticas.' },
+      { bloque: 'Ritmos', programa: 'Zona 2 + fartlek', nota: 'Rodaje largo hasta 60-75 min cómodos. 1 SEMANA LIBRE.' },
+      { bloque: 'Específico', programa: 'Intervalos 4×4 + rodaje largo', nota: 'Elige tu carrera objetivo (5K/10K) a ~3 meses.' },
+      { bloque: 'Específico', programa: 'Intervalos 4×4 + sprints', nota: 'Máximo 2 sesiones intensas/semana; el resto suave.' },
+      { bloque: 'Específico', programa: 'Intervalos + ritmo de carrera', nota: 'Ensaya el ritmo objetivo en bloques dentro del rodaje.' },
+      { bloque: 'Carrera objetivo', programa: 'Afinamiento + CARRERA', nota: 'Semanas 1-2 bajando volumen, semana 3 la carrera, semana 4 libre.' },
+      { bloque: 'Transición', programa: 'Caminata + zona 2 suave', nota: 'Sin estructura: muévete por gusto y recupera.' },
+      { bloque: 'Mantenimiento', programa: 'Zona 2 + protocolo japonés', nota: 'Cierra el año manteniendo la base; planea el siguiente.' },
+    ],
+  },
+]
+
+// Qué es progresar de verdad, por nivel (reglas de dedo honestas).
+export const PROGRESION_REALISTA = [
+  {
+    nivel: 'Novato (0-1 año entrenando)',
+    esperable: 'La fuerza sube casi cada semana; en un año son plausibles +40-60 kg en sentadilla y +20-30 kg en press. Músculo: ~0.5-1 kg/mes los primeros meses (menos en déficit).',
+    error: 'Cambiar de programa cada 3 semanas y copiar volumen de avanzados. Tu ventaja es que TODO funciona: exprime lo simple.',
+  },
+  {
+    nivel: 'Intermedio (1-3 años)',
+    esperable: 'Los PRs llegan por mes, no por sesión: +2.5 kg/mes en básicos ya es buen ritmo. Músculo: ~0.2-0.5 kg/mes con todo bien hecho.',
+    error: 'Interpretar la meseta como "falta volumen". Casi siempre falta sueño, comida o una descarga a tiempo.',
+  },
+  {
+    nivel: 'Avanzado (3+ años)',
+    esperable: 'Se progresa por BLOQUES: kilos al año, no al mes. Los PRs se planean para el final de un bloque de pico, no se intentan cada viernes.',
+    error: 'Saltarse descargas. A este nivel, la recuperación ES el entrenamiento.',
+  },
+]
+
 // Principios que aplican a TODOS los programas de arriba.
 export const PRINCIPIOS = [
   ['Calienta con intención', '5-10 min: pulso arriba + movilidad de lo que vas a usar + series de aproximación. No es opcional con cargas altas.'],

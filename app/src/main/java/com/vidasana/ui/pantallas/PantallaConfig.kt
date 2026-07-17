@@ -1,5 +1,6 @@
 package com.vidasana.ui.pantallas
 
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,7 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.vidasana.cancelarRecordatorio
 import com.vidasana.datos.BaseDatos
+import com.vidasana.programarRecordatorio
 import com.vidasana.datos.Objetivos
 import com.vidasana.datos.Perfil
 import com.vidasana.datos.Respaldo
@@ -51,6 +54,8 @@ import com.vidasana.ui.componentes.TituloApartado
 import com.vidasana.ui.componentes.hoyIso
 import kotlinx.coroutines.launch
 
+private val HORA_VALIDA = Regex("^([01]?\\d|2[0-3]):[0-5]\\d$")
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PantallaConfig(nav: NavHostController) {
@@ -65,6 +70,8 @@ fun PantallaConfig(nav: NavHostController) {
     var estatura by remember { mutableStateOf("") }
     var objetivos by remember { mutableStateOf(setOf<String>()) }
     var medica by remember { mutableStateOf(false) }
+    var recordatorio by remember { mutableStateOf(false) }
+    var horaRecordatorio by remember { mutableStateOf("21:00") }
     var cargado by remember { mutableStateOf(false) }
 
     LaunchedEffect(perfil) {
@@ -75,7 +82,19 @@ fun PantallaConfig(nav: NavHostController) {
             if (p.estaturaCm > 0) estatura = p.estaturaCm.toString()
             objetivos = p.objetivos
             medica = p.seccionMedica
+            recordatorio = p.recordatorio
+            horaRecordatorio = p.horaRecordatorio
             cargado = true
+        }
+    }
+
+    // Android 13+: la notificación necesita permiso en tiempo de ejecución.
+    val pedirNotificaciones = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { concedido ->
+        if (!concedido) {
+            recordatorio = false
+            Toast.makeText(contexto, "Sin permiso de notificaciones no hay recordatorio", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -164,6 +183,46 @@ fun PantallaConfig(nav: NavHostController) {
             Switch(checked = medica, onCheckedChange = { medica = it })
         }
 
+        TituloApartado("Recordatorio diario")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Avisarme para registrar", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Una notificación al día, a la hora que elijas. Todo local.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Switch(
+                checked = recordatorio,
+                onCheckedChange = { activo ->
+                    recordatorio = activo
+                    if (activo && Build.VERSION.SDK_INT >= 33) {
+                        pedirNotificaciones.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                },
+            )
+        }
+        if (recordatorio) {
+            OutlinedTextField(
+                value = horaRecordatorio,
+                onValueChange = { nuevo ->
+                    val limpio = nuevo.filter { it.isDigit() || it == ':' }.take(5)
+                    horaRecordatorio = if (limpio.length == 2 && !limpio.contains(':') &&
+                        horaRecordatorio.length < limpio.length
+                    ) "$limpio:" else limpio
+                },
+                label = { Text("Hora (HH:mm)") },
+                singleLine = true,
+                isError = !HORA_VALIDA.matches(horaRecordatorio),
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
         Button(
             onClick = {
                 ambito.launch {
@@ -175,12 +234,17 @@ fun PantallaConfig(nav: NavHostController) {
                             estaturaCm = estatura.toIntOrNull() ?: 0,
                             objetivos = objetivos,
                             seccionMedica = medica,
+                            recordatorio = recordatorio,
+                            horaRecordatorio = horaRecordatorio,
                         ),
                     )
+                    if (recordatorio) programarRecordatorio(contexto, horaRecordatorio)
+                    else cancelarRecordatorio(contexto)
                     nav.popBackStack()
                 }
             },
-            enabled = edad.isNotEmpty() && sexo.isNotEmpty(),
+            enabled = edad.isNotEmpty() && sexo.isNotEmpty() &&
+                (!recordatorio || HORA_VALIDA.matches(horaRecordatorio)),
             modifier = Modifier.fillMaxWidth(),
         ) { Text("Guardar") }
 
@@ -209,6 +273,8 @@ fun PantallaConfig(nav: NavHostController) {
                     ambito.launch {
                         aplicarRespaldo(db, r)
                         guardarPerfil(contexto, r.perfil)
+                        if (r.perfil.recordatorio) programarRecordatorio(contexto, r.perfil.horaRecordatorio)
+                        else cancelarRecordatorio(contexto)
                         cargado = false
                         Toast.makeText(contexto, "Respaldo importado", Toast.LENGTH_SHORT).show()
                     }

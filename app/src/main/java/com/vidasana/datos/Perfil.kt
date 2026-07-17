@@ -23,6 +23,9 @@ data class Perfil(
     val configurado: Boolean = false,
     /** Activa la sección Doctor (métricas médicas personalizadas). */
     val seccionMedica: Boolean = false,
+    /** Recordatorio diario para registrar (notificación local). */
+    val recordatorio: Boolean = false,
+    val horaRecordatorio: String = "21:00", // HH:mm
 )
 
 object Objetivos {
@@ -44,6 +47,8 @@ private val CLAVE_ESTATURA = intPreferencesKey("estaturaCm")
 private val CLAVE_OBJETIVOS = stringSetPreferencesKey("objetivos")
 private val CLAVE_CONFIGURADO = booleanPreferencesKey("configurado")
 private val CLAVE_MEDICA = booleanPreferencesKey("seccionMedica")
+private val CLAVE_RECORDATORIO = booleanPreferencesKey("recordatorio")
+private val CLAVE_HORA_RECORDATORIO = stringPreferencesKey("horaRecordatorio")
 
 fun flujoPerfil(context: Context): Flow<Perfil> =
     context.datosPerfil.data.map { p ->
@@ -54,6 +59,8 @@ fun flujoPerfil(context: Context): Flow<Perfil> =
             objetivos = p[CLAVE_OBJETIVOS] ?: emptySet(),
             configurado = p[CLAVE_CONFIGURADO] ?: false,
             seccionMedica = p[CLAVE_MEDICA] ?: false,
+            recordatorio = p[CLAVE_RECORDATORIO] ?: false,
+            horaRecordatorio = p[CLAVE_HORA_RECORDATORIO] ?: "21:00",
         )
     }
 
@@ -65,5 +72,7 @@ suspend fun guardarPerfil(context: Context, perfil: Perfil) {
         p[CLAVE_OBJETIVOS] = perfil.objetivos
         p[CLAVE_CONFIGURADO] = true
         p[CLAVE_MEDICA] = perfil.seccionMedica
+        p[CLAVE_RECORDATORIO] = perfil.recordatorio
+        p[CLAVE_HORA_RECORDATORIO] = perfil.horaRecordatorio
     }
 }

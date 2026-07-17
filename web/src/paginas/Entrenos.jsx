@@ -1,9 +1,18 @@
 import { useState } from 'react'
-import { CATEGORIAS, PROGRAMAS, CARDIO, PRINCIPIOS } from '../datos/rutinas.js'
+import {
+  CATEGORIAS, PROGRAMAS, CARDIO, PRINCIPIOS,
+  MESOCICLO, PLANES_ANUALES, PROGRESION_REALISTA,
+} from '../datos/rutinas.js'
+
+const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 export default function Entrenos() {
   const [clave, setClave] = useState(PROGRAMAS[0].clave)
   const programa = PROGRAMAS.find((p) => p.clave === clave)
+  const [objetivo, setObjetivo] = useState(PLANES_ANUALES[0].clave)
+  const [mesInicio, setMesInicio] = useState(new Date().getMonth())
+  const plan = PLANES_ANUALES.find((p) => p.clave === objetivo)
 
   return (
     <>
@@ -68,6 +77,99 @@ export default function Entrenos() {
       <div className="tarjeta">
         <p style={{ marginTop: 0 }}><strong>Cómo progresar:</strong> {programa.progresion}</p>
         <p className="mini" style={{ fontStyle: 'italic', marginBottom: 0 }}>Evidencia: {programa.evidencia}</p>
+      </div>
+
+      <h2>Planea tu mes: el mesociclo de 4 semanas</h2>
+      <p className="mini">
+        Aplica a cualquier programa de arriba: 3 semanas subiendo la exigencia y
+        1 de <strong>descarga</strong>. Progresar sin planear la recuperación es
+        la receta del estancamiento y las lesiones.
+      </p>
+      <div className="tarjeta">
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr><th>Semana</th><th>Intención</th><th>Esfuerzo</th><th>Volumen</th><th>Cómo se ve</th></tr>
+            </thead>
+            <tbody>
+              {MESOCICLO.map((s) => (
+                <tr key={s.semana} style={s.semana === 4 ? { background: 'var(--crema-suave)' } : undefined}>
+                  <td className="num">{s.semana}</td>
+                  <td><strong>{s.nombre}</strong></td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{s.rir}</td>
+                  <td>{s.volumen}</td>
+                  <td>{s.texto}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mini" style={{ marginBottom: 0 }}>
+          RIR = repeticiones en reserva (RIR 2 ≈ RPE 8 en la app). Si un mes fue
+          malo (enfermedad, viaje, exámenes), <strong>repítelo</strong>: el plan
+          está al servicio de tu vida, no al revés.
+        </p>
+      </div>
+
+      <h2>Planea tu año: bloques con descarga integrada</h2>
+      <p className="mini">
+        Elige tu objetivo principal y tu mes de inicio; cada mes de la tabla es un
+        mesociclo completo (su semana 4 es SIEMPRE de descarga) y hay 2 semanas
+        totalmente libres al año — también se planean.
+      </p>
+      <div className="fila" style={{ marginBottom: '0.4rem' }}>
+        {PLANES_ANUALES.map((p) => (
+          <button
+            key={p.clave}
+            className={'boton' + (p.clave === objetivo ? '' : ' secundario')}
+            style={{ padding: '0.4rem 0.9rem', fontSize: '0.88rem' }}
+            onClick={() => setObjetivo(p.clave)}
+          >
+            {p.nombre}
+          </button>
+        ))}
+      </div>
+      <div className="fila" style={{ marginBottom: '0.5rem' }}>
+        <label>Empiezo en{' '}
+          <select value={mesInicio} onChange={(e) => setMesInicio(Number(e.target.value))}>
+            {MESES.map((m, i) => <option key={m} value={i}>{m}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="tarjeta">
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr><th>Mes</th><th>Bloque</th><th>Programa</th><th>Nota</th></tr>
+            </thead>
+            <tbody>
+              {plan.meses.map((m, i) => (
+                <tr key={i}>
+                  <td style={{ whiteSpace: 'nowrap' }}>{MESES[(mesInicio + i) % 12]}</td>
+                  <td><strong>{m.bloque}</strong></td>
+                  <td>{m.programa}</td>
+                  <td className="mini">{m.nota}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mini" style={{ marginBottom: 0 }}>
+          Registra cada sesión en la app: al final de cada bloque, la gráfica de
+          gasto por día (rango 90/365 días) y tus series te dicen si el bloque
+          cumplió antes de pasar al siguiente.
+        </p>
+      </div>
+
+      <h2>Progresión realista: qué esperar según tu nivel</h2>
+      <div className="rejilla">
+        {PROGRESION_REALISTA.map((n) => (
+          <div className="tarjeta" key={n.nivel}>
+            <h3 style={{ marginTop: 0 }}>{n.nivel}</h3>
+            <p style={{ margin: '0 0 0.4rem' }}>{n.esperable}</p>
+            <p className="mini" style={{ margin: 0 }}><strong>Error típico:</strong> {n.error}</p>
+          </div>
+        ))}
       </div>
 
       <h2>Cardio y acondicionamiento</h2>
