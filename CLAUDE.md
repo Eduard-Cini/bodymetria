@@ -106,6 +106,9 @@ $env:JAVA_TOOL_OPTIONS = "-Djavax.net.ssl.trustStoreType=Windows-ROOT"   # TLS i
 .\gradlew.bat assembleDebug
 ```
 APK: `app/build/outputs/apk/debug/app-debug.apk` (instalar por adb o copiando al teléfono).
+Release completo: `.\scripts\release.ps1` — compila, copia el APK a
+web/public/bodymetria.apk y lo sube al release de GitHub con `gh release upload
+--clobber` (gh CLI portable en `%LOCALAPPDATA%\gh-cli\bin`, ya autenticado).
 SDK en `%LOCALAPPDATA%\Android\Sdk` (cmdline-tools; sin emulador). Las descargas con
 curl necesitan `--ssl-no-revoke` en esta red.
 
