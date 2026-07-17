@@ -14,13 +14,20 @@ visible es Bodymetria.
    notas y desglose opcional ejercicios → series (repes × peso). El desglose está
    en TODAS las disciplinas; con Gym/Calistenia se abre una tarjeta sola. Las
    sugerencias de ejercicio = catálogo fijo + los ya registrados (propios).
+   Editar sesión = lápiz en la fila precarga el formulario y al guardar se
+   REEMPLAZA (borrar + reinsertar). Rutinas: plantillas de sesión reutilizables
+   (tabla `rutinas`, BD v4; desglose como JSON en `ejerciciosJson`); se guardan
+   desde el formulario y "Usar" lo precarga. Entran al respaldo.
 3. `composicion` — peso, músculo (kg), grasa (%).
 4. `sueno` — hora dormir/despertar (HH:mm, cruza medianoche), calificación 1-5.
 5-8, 10. `diario/{tipo}` — pantalla genérica de UN valor por día: `estres` (1-10),
    `agua` (ml), `lectura` (min + campo `texto` = libro, con sugerencias),
    `meditacion` (sí/no), `animo` (1-10), `regla` (sí/no; SOLO si perfil femenino).
 9. `usoCelular` — minutos por app y por día (filas app+minutos; sugerencias
-   comunes + ya usadas).
+   comunes + ya usadas). Importación automática del sistema (datos/UsoSistema.kt:
+   UsageStatsManager por eventos de primer plano, filtra apps sin lanzador y <1
+   min); pide el permiso especial "Acceso de uso" con diálogo → Ajustes. Es el
+   ÚNICO permiso de la app y es opcional.
 
 Además (v1):
 - `diario/verduras` — sección "Micronutrientes": registra PORCIONES DE VERDURA
@@ -38,6 +45,14 @@ Además (v1):
   los retos: en el sitio web (página FODMAP).
 - `consejos` — estático, papers reales resumidos como asociaciones; acceso por
   el foco de la barra superior.
+- `correlaciones` — Pearson entre pares de series diarias (sueño↔ánimo,
+  estrés↔sueño, meditación↔estrés, ejercicio↔ánimo, celular↔sueño,
+  estrés↔síntomas FODMAP…) sobre 90 días, mínimo 10 días pareados; ejercicio
+  cuenta días sin sesión como 0. Acceso por el icono de estadísticas en Inicio.
+  Siempre con el aviso correlación ≠ causalidad.
+- Gráficas con rango elegible (30/90/180/365 días) vía desplegable compacto en
+  el encabezado de la propia gráfica (estado interno de GraficaBase; los call
+  sites no cambian). PanelEstadisticas sigue fijo en 7/30 días.
 - Metas (datos/Metas.kt): kcal/macros por Mifflin-St Jeor ×1.3 + media real de
   gasto por ejercicio 7d; prioridad pérdida>ganancia>longevidad (longevidad =
   déficit 8%, proteína 1.2 g/kg CON ÉNFASIS VEGETAL, nota de mucha verdura);
@@ -66,8 +81,8 @@ Comandos: `npm run dev` / `npm run build` en `web/`. Preview: launch.json
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto
   ISO yyyy-MM-dd; tabla `diario` unifica las secciones de un valor/día con clave
   (fecha,tipo) + columna `texto`), `Daos.kt` (Flows + upsert), `BaseDatos.kt`
-  (singleton; **v2** con MIGRACION_1_2 — al tocar el esquema, añadir migración,
-  NUNCA fallbackToDestructiveMigration),
+  (singleton; **v4** con MIGRACION_1_2/2_3/3_4 — al tocar el esquema, añadir
+  migración, NUNCA fallbackToDestructiveMigration),
   `Perfil.kt` (DataStore), `Respaldo.kt` (export/import JSON con kotlinx.serialization;
   re-importa sesiones re-mapeando ids autogenerados).
 - `ui/componentes/` — `Componentes.kt` (MarcoPantalla, SelectorFecha ←hoy→,
@@ -116,6 +131,8 @@ React 19 + Vite, 100% estático (HashRouter, base './'), datos en localStorage.
   de la porción; se convierten al guardar.
 
 ## Pendiente (fase 2)
-- Captura automática: UsageStatsManager, Health Connect.
-- Correlaciones entre secciones (p. ej. sueño vs ánimo), rangos de tiempo en gráficas.
-- Editar sesiones de ejercicio existentes (hoy: borrar y recrear).
+- Health Connect (sueño/peso/ejercicio automáticos) — esperando a que tenga
+  sentido con hardware del usuario (smartwatch/banda).
+- Publicación en Play Store.
+(Ya hechos: UsageStatsManager, correlaciones, rangos en gráficas, editar
+sesiones + rutinas.)

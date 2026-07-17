@@ -25,6 +25,20 @@ private val MIGRACION_2_3 = object : Migration(2, 3) {
     }
 }
 
+/** v4: rutinas de ejercicio (plantillas de sesión reutilizables). */
+private val MIGRACION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS rutinas (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "nombre TEXT NOT NULL, disciplina TEXT NOT NULL, " +
+                "duracionMin INTEGER NOT NULL, gastoKcal INTEGER NOT NULL, " +
+                "esfuerzo INTEGER NOT NULL, notas TEXT NOT NULL DEFAULT '', " +
+                "ejerciciosJson TEXT NOT NULL DEFAULT '[]')",
+        )
+    }
+}
+
 @Database(
     entities = [
         RegistroMacros::class,
@@ -36,8 +50,9 @@ private val MIGRACION_2_3 = object : Migration(2, 3) {
         ValorDiario::class,
         UsoApp::class,
         MetricaMedica::class,
+        Rutina::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class BaseDatos : RoomDatabase() {
@@ -48,6 +63,7 @@ abstract class BaseDatos : RoomDatabase() {
     abstract fun diario(): DiarioDao
     abstract fun usoApps(): UsoAppDao
     abstract fun medica(): MedicaDao
+    abstract fun rutinas(): RutinaDao
 
     companion object {
         @Volatile private var instancia: BaseDatos? = null
@@ -58,7 +74,7 @@ abstract class BaseDatos : RoomDatabase() {
                     context.applicationContext,
                     BaseDatos::class.java,
                     "vidasana.db",
-                ).addMigrations(MIGRACION_1_2, MIGRACION_2_3).build().also { instancia = it }
+                ).addMigrations(MIGRACION_1_2, MIGRACION_2_3, MIGRACION_3_4).build().also { instancia = it }
             }
     }
 }

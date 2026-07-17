@@ -13,6 +13,7 @@ import com.vidasana.ui.TemaVidaSana
 import com.vidasana.ui.pantallas.PantallaComposicion
 import com.vidasana.ui.pantallas.PantallaConfig
 import com.vidasana.ui.pantallas.PantallaConsejos
+import com.vidasana.ui.pantallas.PantallaCorrelaciones
 import com.vidasana.ui.pantallas.PantallaDiario
 import com.vidasana.ui.pantallas.PantallaDoctor
 import com.vidasana.ui.pantallas.PantallaEjercicio
@@ -48,6 +49,7 @@ fun Navegacion() {
         composable("doctor") { PantallaDoctor(nav) }
         composable("fodmap") { PantallaFodmap(nav) }
         composable("consejos") { PantallaConsejos(nav) }
+        composable("correlaciones") { PantallaCorrelaciones(nav) }
         composable("diario/{tipo}") { entrada ->
             PantallaDiario(nav, entrada.arguments?.getString("tipo") ?: "")
         }

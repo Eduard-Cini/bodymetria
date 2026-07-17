@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,7 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
+import com.vidasana.datos.EjercicioRutina
+import com.vidasana.datos.Rutina
+import com.vidasana.datos.SerieRutina
 import com.vidasana.datos.Sesion
+import com.vidasana.datos.SesionCompleta
+import com.vidasana.datos.desgloseAJson
+import com.vidasana.datos.desgloseDesdeJson
 import com.vidasana.datos.estimarGastoKcal
 import com.vidasana.ui.componentes.BotonBorrar
 import com.vidasana.ui.componentes.CampoConSugerencias
@@ -46,6 +55,7 @@ import com.vidasana.ui.componentes.SelectorFecha
 import com.vidasana.ui.componentes.SelectorNivel
 import com.vidasana.ui.componentes.TituloApartado
 import com.vidasana.ui.componentes.fechaCorta
+import com.vidasana.ui.componentes.formatear
 import com.vidasana.ui.componentes.hoyIso
 import com.vidasana.ui.componentes.puntosDesde
 import kotlinx.coroutines.launch
@@ -91,6 +101,82 @@ fun PantallaEjercicio(nav: NavHostController) {
     var esfuerzo by remember { mutableIntStateOf(5) }
     var notas by remember { mutableStateOf("") }
     val ejercicios = remember { mutableStateListOf<EjercicioEditable>() }
+    /** id de la sesión que se está editando (null = capturando una nueva). */
+    var editandoId by remember { mutableStateOf<Long?>(null) }
+    var guardandoRutina by remember { mutableStateOf(false) }
+
+    fun limpiarFormulario() {
+        editandoId = null
+        disciplina = ""
+        duracion = ""
+        gasto = ""
+        gastoManual = false
+        esfuerzo = 5
+        notas = ""
+        ejercicios.clear()
+    }
+
+    /** Precarga el desglose ejercicios → series en el formulario. */
+    fun cargarDesglose(lista: List<EjercicioRutina>) {
+        ejercicios.clear()
+        lista.forEach { e ->
+            ejercicios.add(
+                EjercicioEditable().apply {
+                    nombre = e.nombre
+                    series.clear()
+                    e.series.forEach { s ->
+                        series.add(
+                            SerieEditable().apply {
+                                reps = s.repeticiones.toString()
+                                peso = s.pesoKg?.let { formatear(it, 1) } ?: ""
+                            },
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    fun cargarSesion(s: SesionCompleta) {
+        editandoId = s.sesion.id
+        fecha = s.sesion.fecha
+        disciplina = s.sesion.disciplina
+        duracion = s.sesion.duracionMin.toString()
+        gasto = s.sesion.gastoKcal.toString()
+        gastoManual = true
+        esfuerzo = s.sesion.esfuerzo
+        notas = s.sesion.notas
+        cargarDesglose(
+            s.ejercicios.sortedBy { it.ejercicio.orden }.map { e ->
+                EjercicioRutina(
+                    e.ejercicio.nombre,
+                    e.series.sortedBy { it.orden }.map { SerieRutina(it.repeticiones, it.pesoKg) },
+                )
+            },
+        )
+    }
+
+    fun aplicarRutina(r: Rutina) {
+        editandoId = null
+        disciplina = r.disciplina
+        duracion = if (r.duracionMin > 0) r.duracionMin.toString() else ""
+        gasto = if (r.gastoKcal > 0) r.gastoKcal.toString() else ""
+        gastoManual = r.gastoKcal > 0
+        esfuerzo = r.esfuerzo
+        notas = r.notas
+        cargarDesglose(desgloseDesdeJson(r.ejerciciosJson))
+    }
+
+    /** Desglose actual del formulario, listo para serializar en una rutina. */
+    fun desgloseActual(): List<EjercicioRutina> = ejercicios
+        .filter { it.nombre.isNotBlank() }
+        .map { e ->
+            EjercicioRutina(
+                e.nombre.trim(),
+                e.series.filter { it.reps.toIntOrNull() != null }
+                    .map { SerieRutina(it.reps.toIntOrNull() ?: 0, it.peso.toFloatOrNull()) },
+            )
+        }
 
     val esFuerza = disciplina.trim().lowercase() in DISCIPLINAS_FUERZA
     LaunchedEffect(esFuerza) {
@@ -110,6 +196,7 @@ fun PantallaEjercicio(nav: NavHostController) {
     }
 
     val sesiones by remember { db.ejercicio().sesionesCompletas() }.collectAsState(initial = emptyList())
+    val rutinas by remember { db.rutinas().todas() }.collectAsState(initial = emptyList())
     val kcalPorDia = sesiones
         .groupBy { it.sesion.fecha }
         .map { (f, lista) -> f to lista.sumOf { it.sesion.gastoKcal }.toFloat() }
@@ -122,6 +209,52 @@ fun PantallaEjercicio(nav: NavHostController) {
 
     MarcoPantalla("Ejercicio", nav) {
         SelectorFecha(fecha) { fecha = it }
+
+        // Rutinas guardadas: un toque precarga el formulario completo.
+        if (rutinas.isNotEmpty()) {
+            TituloApartado("Mis rutinas")
+            rutinas.forEach { r ->
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp, end = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(r.nombre, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                            val nEj = desgloseDesdeJson(r.ejerciciosJson).size
+                            Text(
+                                "${r.disciplina} · ${r.duracionMin} min" +
+                                    if (nEj > 0) " · $nEj ejercicio${if (nEj > 1) "s" else ""}" else "",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        TextButton(onClick = { aplicarRutina(r) }) { Text("Usar") }
+                        BotonBorrar("Rutina \"${r.nombre}\"") {
+                            ambito.launch { db.rutinas().borrar(r.id) }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (editandoId != null) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        "Editando la sesión del ${fechaCorta(fecha)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = { limpiarFormulario() }) { Text("Cancelar") }
+                }
+            }
+        }
 
         CampoConSugerencias(
             valor = disciplina,
@@ -201,14 +334,13 @@ fun PantallaEjercicio(nav: NavHostController) {
             onClick = {
                 val dur = duracion.toIntOrNull() ?: return@Button
                 val kcal = gasto.toIntOrNull() ?: 0
-                val listaEjercicios = ejercicios
-                    .filter { it.nombre.isNotBlank() }
-                    .map { e ->
-                        e.nombre.trim() to e.series
-                            .filter { it.reps.toIntOrNull() != null }
-                            .map { (it.reps.toIntOrNull() ?: 0) to it.peso.toFloatOrNull() }
-                    }
+                val listaEjercicios = desgloseActual()
+                    .map { e -> e.nombre to e.series.map { it.repeticiones to it.pesoKg } }
+                val idViejo = editandoId
                 ambito.launch {
+                    // Editar = reemplazar: se borra la sesión original y se
+                    // reinserta con los datos del formulario.
+                    if (idViejo != null) db.ejercicio().borrarSesion(idViejo)
                     db.ejercicio().guardarSesion(
                         Sesion(
                             fecha = fecha,
@@ -220,18 +352,18 @@ fun PantallaEjercicio(nav: NavHostController) {
                         ),
                         listaEjercicios,
                     )
-                    disciplina = ""
-                    duracion = ""
-                    gasto = ""
-                    gastoManual = false
-                    esfuerzo = 5
-                    notas = ""
-                    ejercicios.clear()
+                    limpiarFormulario()
                 }
             },
             enabled = disciplina.isNotBlank() && duracion.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
-        ) { Text("Guardar sesión") }
+        ) { Text(if (editandoId != null) "Actualizar sesión" else "Guardar sesión") }
+
+        OutlinedButton(
+            onClick = { guardandoRutina = true },
+            enabled = disciplina.isNotBlank() && duracion.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text("Guardar como rutina (para repetirla)") }
 
         TituloApartado("Gasto energético por día")
         PanelEstadisticas(puntosKcal, "kcal", decimales = 0)
@@ -277,6 +409,13 @@ fun PantallaEjercicio(nav: NavHostController) {
                                 )
                             }
                         }
+                        IconButton(onClick = { cargarSesion(s) }) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Editar sesión",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                         BotonBorrar(
                             descripcion = "Sesión de ${s.sesion.disciplina} del ${fechaCorta(s.sesion.fecha)} (${s.sesion.duracionMin} min)",
                             onConfirmar = { ambito.launch { db.ejercicio().borrarSesion(s.sesion.id) } },
@@ -286,4 +425,61 @@ fun PantallaEjercicio(nav: NavHostController) {
             }
         }
     }
+
+    if (guardandoRutina) {
+        DialogoNombreRutina(
+            sugerencia = disciplina.trim(),
+            onCancelar = { guardandoRutina = false },
+            onGuardar = { nombre ->
+                guardandoRutina = false
+                ambito.launch {
+                    db.rutinas().insertar(
+                        Rutina(
+                            nombre = nombre,
+                            disciplina = disciplina.trim(),
+                            duracionMin = duracion.toIntOrNull() ?: 0,
+                            gastoKcal = gasto.toIntOrNull() ?: 0,
+                            esfuerzo = esfuerzo,
+                            notas = notas.trim(),
+                            ejerciciosJson = desgloseAJson(desgloseActual()),
+                        ),
+                    )
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun DialogoNombreRutina(
+    sugerencia: String,
+    onCancelar: () -> Unit,
+    onGuardar: (String) -> Unit,
+) {
+    var nombre by remember { mutableStateOf(sugerencia) }
+    AlertDialog(
+        onDismissRequest = onCancelar,
+        title = { Text("Guardar rutina") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    "Se guarda lo que tiene el formulario (disciplina, duración, " +
+                        "gasto, esfuerzo y ejercicios) para reutilizarlo con un toque.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = { nombre = it },
+                    label = { Text("Nombre (p. ej. Pierna lunes)") },
+                    singleLine = true,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onGuardar(nombre.trim()) }, enabled = nombre.isNotBlank()) {
+                Text("Guardar")
+            }
+        },
+        dismissButton = { TextButton(onClick = onCancelar) { Text("Cancelar") } },
+    )
 }

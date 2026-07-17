@@ -122,6 +122,14 @@ data class TotalDia(val fecha: String, val minutos: Int)
 data class TotalApp(val app: String, val minutos: Int)
 
 @Dao
+interface RutinaDao {
+    @Insert suspend fun insertar(r: Rutina): Long
+    @Query("DELETE FROM rutinas WHERE id = :id") suspend fun borrar(id: Long)
+    @Query("SELECT * FROM rutinas ORDER BY nombre") fun todas(): Flow<List<Rutina>>
+    @Query("SELECT * FROM rutinas ORDER BY id") suspend fun exportar(): List<Rutina>
+}
+
+@Dao
 interface MedicaDao {
     @Insert suspend fun insertar(m: MetricaMedica): Long
     @Query("DELETE FROM metricas_medicas WHERE id = :id") suspend fun borrar(id: Long)

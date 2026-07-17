@@ -29,8 +29,9 @@ export default function Inicio() {
         </div>
         <div className="tarjeta">
           <h3>🔒 Privacidad primero</h3>
-          La app no pide permisos ni usa internet. Tus registros viven en tu
-          teléfono y solo tú decides exportarlos como respaldo JSON.
+          La app no usa internet. El único permiso es opcional (acceso de uso,
+          si quieres importar tu tiempo de pantalla automáticamente); tus registros
+          viven en tu teléfono y solo tú decides exportarlos como respaldo JSON.
         </div>
       </div>
 

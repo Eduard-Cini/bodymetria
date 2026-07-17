@@ -1,6 +1,7 @@
 package com.vidasana.ui.componentes
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,10 +9,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -109,11 +120,14 @@ private fun Tile(titulo: String, valor: String, modifier: Modifier = Modifier) {
     }
 }
 
-private const val DIAS_VENTANA = 30L
+/** Rangos disponibles en el desplegable de cada gráfica. */
+private val RANGOS_DIAS = listOf(30, 90, 180, 365)
+
+private fun etiquetaRango(dias: Int) = if (dias == 365) "Último año" else "Últimos $dias días"
 
 /**
- * Gráfica de líneas de los últimos 30 días. Una sola serie (color primario),
- * rejilla discreta, etiquetas de mín/máx y del último valor.
+ * Gráfica de líneas con rango elegible (30/90/180/365 días; 30 por defecto).
+ * Una sola serie (color primario), rejilla discreta y etiqueta del último valor.
  */
 @Composable
 fun GraficaLineas(
@@ -125,7 +139,7 @@ fun GraficaLineas(
     GraficaBase(datos, unidad, decimales, desdeCero, barras = false)
 }
 
-/** Gráfica de barras (magnitudes desde cero) de los últimos 30 días. */
+/** Gráfica de barras (magnitudes desde cero) con rango elegible. */
 @Composable
 fun GraficaBarras(
     datos: List<PuntoFecha>,
@@ -143,11 +157,15 @@ private fun GraficaBase(
     desdeCero: Boolean,
     barras: Boolean,
 ) {
+    var dias by remember { mutableIntStateOf(30) }
+    var menuAbierto by remember { mutableStateOf(false) }
+
     val hoy = LocalDate.now()
-    val inicio = hoy.minusDays(DIAS_VENTANA - 1)
+    val inicio = hoy.minusDays(dias - 1L)
     val visibles = datos.filter { it.fecha >= inicio && it.fecha <= hoy }
 
-    if (visibles.size < 2) {
+    if (datos.size < 2) {
+        // Sin datos suficientes en ningún rango: no vale la pena el selector.
         Card(modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
                 Text(
@@ -167,16 +185,47 @@ private fun GraficaBase(
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(
-                "Últimos 30 días",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Canvas(modifier = Modifier.fillMaxWidth().height(180.dp).padding(top = 8.dp)) {
-                dibujarGrafica(
-                    visibles, inicio, hoy, desdeCero, barras,
-                    colorSerie, colorTexto, colorRejilla, tamTexto, decimales, unidad,
-                )
+            // Encabezado compacto: el rango es un desplegable, no botones sueltos.
+            Box {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { menuAbierto = true },
+                ) {
+                    Text(
+                        etiquetaRango(dias),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "Cambiar rango",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                DropdownMenu(expanded = menuAbierto, onDismissRequest = { menuAbierto = false }) {
+                    RANGOS_DIAS.forEach { r ->
+                        DropdownMenuItem(
+                            text = { Text(etiquetaRango(r)) },
+                            onClick = { dias = r; menuAbierto = false },
+                        )
+                    }
+                }
+            }
+            if (visibles.size < 2) {
+                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                    Text(
+                        "Sin datos suficientes en este rango",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                Canvas(modifier = Modifier.fillMaxWidth().height(180.dp).padding(top = 8.dp)) {
+                    dibujarGrafica(
+                        visibles, inicio, hoy, desdeCero, barras,
+                        colorSerie, colorTexto, colorRejilla, tamTexto, decimales, unidad,
+                    )
+                }
             }
         }
     }
@@ -247,7 +296,15 @@ private fun DrawScope.dibujarGrafica(
             if (i == 0) camino.moveTo(x(p.fecha), y(p.valor)) else camino.lineTo(x(p.fecha), y(p.valor))
         }
         drawPath(camino, colorSerie, style = Stroke(width = 2.dp.toPx()))
-        datos.forEach { p -> drawCircle(colorSerie, radius = 3.dp.toPx(), center = Offset(x(p.fecha), y(p.valor))) }
+        // Con rangos largos los puntos se amontonan: se dibujan más chicos o se omiten.
+        val radio = when {
+            datos.size <= 45 -> 3.dp.toPx()
+            datos.size <= 120 -> 1.5.dp.toPx()
+            else -> 0f
+        }
+        if (radio > 0f) {
+            datos.forEach { p -> drawCircle(colorSerie, radius = radio, center = Offset(x(p.fecha), y(p.valor))) }
+        }
     }
 
     // Etiqueta directa del último valor

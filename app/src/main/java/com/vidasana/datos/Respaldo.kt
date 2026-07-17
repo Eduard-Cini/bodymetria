@@ -18,6 +18,7 @@ data class Respaldo(
     val diario: List<ValorDiario>,
     val usoApps: List<UsoApp>,
     val metricasMedicas: List<MetricaMedica> = emptyList(),
+    val rutinas: List<Rutina> = emptyList(),
 )
 
 private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
@@ -34,6 +35,7 @@ suspend fun crearRespaldo(db: BaseDatos, perfil: Perfil): String {
         diario = db.diario().exportar(),
         usoApps = db.usoApps().exportar(),
         metricasMedicas = db.medica().exportar(),
+        rutinas = db.rutinas().exportar(),
     )
     return json.encodeToString(Respaldo.serializer(), r)
 }
@@ -130,6 +132,14 @@ fun validarRespaldo(texto: String): Respaldo {
             "Tipo de métrica desconocido: ${it.tipo}",
         )
     }
+    r.rutinas.forEach {
+        validarTexto(it.nombre, "rutinas"); validarTexto(it.disciplina, "rutinas")
+        validarTexto(it.notas, "rutinas")
+        exigir(it.duracionMin in 0..1440, "Duración fuera de rango en rutina \"${it.nombre}\"")
+        exigir(it.gastoKcal in 0..20000, "Gasto fuera de rango en rutina \"${it.nombre}\"")
+        exigir(it.esfuerzo in 0..10, "Esfuerzo fuera de rango en rutina \"${it.nombre}\"")
+        exigir(it.ejerciciosJson.length <= 20_000, "Desglose demasiado largo en rutina \"${it.nombre}\"")
+    }
     return r
 }
 
@@ -144,6 +154,7 @@ fun resumenRespaldo(r: Respaldo): String {
     agregar(r.diario.size, "diario (agua, lectura, ánimo…)")
     agregar(r.usoApps.size, "uso del celular")
     agregar(r.metricasMedicas.size, "métricas médicas")
+    agregar(r.rutinas.size, "rutinas de ejercicio")
     return if (partes.isEmpty()) "El respaldo no contiene registros."
     else "Se importarán:\n• " + partes.joinToString("\n• ")
 }
@@ -154,6 +165,7 @@ suspend fun aplicarRespaldo(db: BaseDatos, r: Respaldo) {
     r.composicion.forEach { db.composicion().guardar(it) }
     r.sueno.forEach { db.sueno().guardar(it) }
     r.usoApps.forEach { db.usoApps().guardar(it) }
+    r.rutinas.forEach { db.rutinas().insertar(it.copy(id = 0)) }
 
     // Métricas médicas: ids autogenerados → re-mapear los valores "med.<id>".
     val mapaIds = mutableMapOf<Long, Long>()

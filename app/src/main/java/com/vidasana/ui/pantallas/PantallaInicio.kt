@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Settings
@@ -156,6 +157,9 @@ fun PantallaInicio(nav: NavHostController) {
             TopAppBar(
                 title = { Text("Bodymetria — hoy") },
                 actions = {
+                    IconButton(onClick = { nav.navigate("correlaciones") }) {
+                        Icon(Icons.Default.QueryStats, contentDescription = "Correlaciones")
+                    }
                     IconButton(onClick = { nav.navigate("consejos") }) {
                         Icon(Icons.Default.Lightbulb, contentDescription = "Consejos")
                     }

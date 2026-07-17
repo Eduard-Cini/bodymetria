@@ -5,6 +5,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /** Las fechas se guardan como texto ISO `yyyy-MM-dd` (ordenable lexicográficamente). */
 
@@ -70,6 +72,42 @@ data class Serie(
     val pesoKg: Float?,
     val orden: Int,
 )
+
+// ── Rutinas: plantillas de sesión que se repiten (v4) ────────────────
+/**
+ * Un día de ejercicio guardado para reutilizarse: al aplicarla se precarga el
+ * formulario de sesión. El desglose ejercicios → series va serializado como
+ * JSON en [ejerciciosJson] (ver [desgloseDesdeJson] / [desgloseAJson]).
+ */
+@Serializable
+@Entity(tableName = "rutinas")
+data class Rutina(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val nombre: String,
+    val disciplina: String,
+    val duracionMin: Int,
+    val gastoKcal: Int,
+    val esfuerzo: Int,
+    val notas: String = "",
+    val ejerciciosJson: String = "[]",
+)
+
+@Serializable
+data class EjercicioRutina(val nombre: String, val series: List<SerieRutina>)
+
+@Serializable
+data class SerieRutina(val repeticiones: Int, val pesoKg: Float?)
+
+private val jsonRutina = Json { ignoreUnknownKeys = true }
+
+fun desgloseDesdeJson(texto: String): List<EjercicioRutina> = try {
+    jsonRutina.decodeFromString(texto)
+} catch (e: Exception) {
+    emptyList()
+}
+
+fun desgloseAJson(ejercicios: List<EjercicioRutina>): String =
+    jsonRutina.encodeToString(ejercicios)
 
 // ── Sección 3: composición corporal ──────────────────────────────────
 @Serializable

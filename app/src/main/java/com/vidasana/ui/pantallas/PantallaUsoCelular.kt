@@ -1,11 +1,16 @@
 package com.vidasana.ui.pantallas
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +28,8 @@ import androidx.navigation.NavHostController
 import com.vidasana.datos.BaseDatos
 import com.vidasana.datos.TotalApp
 import com.vidasana.datos.UsoApp
+import com.vidasana.datos.tienePermisoUso
+import com.vidasana.datos.usoPorApp
 import com.vidasana.ui.componentes.CampoConSugerencias
 import com.vidasana.ui.componentes.CampoNumero
 import com.vidasana.ui.componentes.FilaHistorial
@@ -34,7 +41,9 @@ import com.vidasana.ui.componentes.TituloApartado
 import com.vidasana.ui.componentes.hoyIso
 import com.vidasana.ui.componentes.puntosDesde
 import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private val APPS_COMUNES = listOf(
     "YouTube", "WhatsApp", "Facebook", "Instagram", "TikTok", "X (Twitter)",
@@ -66,8 +75,38 @@ fun PantallaUsoCelular(nav: NavHostController) {
     }
     val sugerencias = (usadas + APPS_COMUNES).distinct()
 
+    var pidiendoPermiso by remember { mutableStateOf(false) }
+    var resultadoImport by remember(fecha) { mutableStateOf("") }
+
     MarcoPantalla("Uso del celular", nav) {
         SelectorFecha(fecha) { fecha = it }
+
+        // Importación automática desde UsageStatsManager (permiso especial).
+        OutlinedButton(
+            onClick = {
+                if (!tienePermisoUso(contexto)) {
+                    pidiendoPermiso = true
+                } else {
+                    ambito.launch {
+                        val mapa = withContext(Dispatchers.Default) { usoPorApp(contexto, fecha) }
+                        mapa.forEach { (nombre, min) -> db.usoApps().guardar(UsoApp(fecha, nombre, min)) }
+                        resultadoImport = if (mapa.isEmpty()) {
+                            "El sistema no reporta uso ese día (conserva pocos días de eventos)."
+                        } else {
+                            "Importadas ${mapa.size} apps del sistema; puedes corregir o borrar filas."
+                        }
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text("Importar del sistema (día seleccionado)") }
+        Text(
+            if (resultadoImport.isNotEmpty()) resultadoImport
+            else "Lee el tiempo en pantalla que ya mide tu teléfono (funciona mejor " +
+                "con días recientes). También puedes capturar a mano abajo.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -124,5 +163,29 @@ fun PantallaUsoCelular(nav: NavHostController) {
         TituloApartado("Total por día")
         PanelEstadisticas(puntos, "min", decimales = 0)
         GraficaBarras(puntos, "min")
+    }
+
+    if (pidiendoPermiso) {
+        AlertDialog(
+            onDismissRequest = { pidiendoPermiso = false },
+            title = { Text("Permiso de acceso de uso") },
+            text = {
+                Text(
+                    "Para importar tu tiempo de pantalla, Android pide conceder a " +
+                        "Bodymetria el permiso \"Acceso de uso\" en Ajustes. Es de solo " +
+                        "lectura, opcional, y los datos siguen sin salir de tu teléfono. " +
+                        "Busca Bodymetria en la lista, actívalo y regresa aquí.",
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    pidiendoPermiso = false
+                    contexto.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                }) { Text("Abrir ajustes") }
+            },
+            dismissButton = {
+                TextButton(onClick = { pidiendoPermiso = false }) { Text("Ahora no") }
+            },
+        )
     }
 }
