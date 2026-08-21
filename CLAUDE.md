@@ -73,26 +73,57 @@ La portada ordena las tarjetas según los objetivos del perfil (PESOS_OBJETIVO e
 PantallaInicio.kt); tarjeta con dato de hoy = icono en color primario.
 
 ## Sitio web (`web/`)
-React 19 + Vite, estático (HashRouter, base './'), localStorage. Páginas: Inicio
-(descarga del APK desde `web/public/bodymetria.apk` — COPIAR ahí el APK nuevo en
-cada release), Alimentos (raciones de la Guía IMSS en `src/datos/alimentos.js`,
-macros = promedio del grupo, micros aproximados; totales para pasar a la app),
-Recetas (menú semanal por semilla), Sueño (ciclos + papers), FODMAP (protocolo
-de 3 etapas para SII: listas altos/bajos, menú de eliminación de 7 días con
-recetas mexicanas y calendario de reintroducción; datos en `src/datos/fodmap.js`),
-Entrenos (12 programas de entrenamiento por categoría — gym HIT/volumen/torso-
-pierna, calistenia por habilidad plancha/pino/front lever/bandera, movilidad,
-flexibilidad, estética, glúteo, fullbody 2d — + 8 protocolos de cardio,
-principios y PLANEACIÓN: mesociclo de 4 semanas con descarga (MESOCICLO),
-planes anuales por objetivo músculo/fuerza/calistenia/correr con mes de inicio
-elegible (PLANES_ANUALES) y progresión realista por nivel; datos en
-`src/datos/rutinas.js`; cada día se guarda como rutina en la app),
-Tendones (fortalecimiento de tendones: principios de carga, 4 fases
-isométrico→HSR y protocolos por tendinopatía rotuliana/aquíleo/codo/hombro/
-muñeca; `src/datos/tendones.js`), Tiroides (tips de hipotiroidismo: adherencia
-a levotiroxina, dieta/suplementos con cuidado del yodo, estilo de vida;
-educativo, sin dosis; `src/datos/tiroides.js`). Comandos: `npm run dev` / `npm run build` en `web/`. Preview:
-launch.json "bodymetria-web".
+React 19 + Vite, 100% estático (HashRouter, base './'), datos en localStorage.
+`npm run dev` / `npm run build` en `web/`; preview "bodymetria-web" del launch.json.
+Desplegado en Netlify conectado al repo GitHub `Eduard-Cini/bodymetria`: cada push
+a `main` republica solo. `netlify.toml` va en la RAÍZ (Netlify lo lee de ahí) con
+base = "web", publish = "dist" (relativo a base), command = "npm run build".
+
+12 páginas (rutas en `src/App.jsx`):
+- **Inicio** — descarga del APK. NO se sirve desde Netlify: vive como *release* de
+  GitHub y el botón apunta a `releases/latest/download/bodymetria.apk`
+  (`web/public/bodymetria.apk` está gitignoreado). Subirlo con `scripts/release.ps1`.
+- **Alimentos** — registro del día por raciones; buscador, alimentos propios y
+  totales para pasar a la app. Sin comida basura en el catálogo (fuera Coca/Zucaritas).
+- **Recetas** — menú semanal: ~65 platillos (mexicanos + internacionales adaptados)
+  y 9 postres. Rota solo por semana ISO; máx. UNA receta internacional por semana.
+- **Micros** — guía de 16 micronutrientes: rango con dirección, evidencia con paper
+  y fuentes naturales (marcas solo en sodio, para saber dónde se esconde).
+- **Ejercicio** — recomposición corporal + recomendaciones por objetivo con papers
+  (`datos/ejercicio.js`); incluye Shailendra/Baldock 2022 (fuerza 30-60 min/sem).
+- **Entrenos** — 12 programas + 8 protocolos de cardio + planeación: mesociclo de
+  4 semanas con descarga (MESOCICLO) y planes anuales (PLANES_ANUALES) por objetivo
+  con mes de inicio elegible; `datos/rutinas.js`. Cada día se guarda como rutina en la app.
+- **Tendones** — carga de tendones, 4 fases isométrico→HSR y protocolos por
+  tendinopatía rotuliana/aquíleo/codo/hombro/muñeca; `datos/tendones.js`.
+- **Suplementos** — naturales por objetivo y sintéticos con GRADO de evidencia
+  (creatina y proteína fuertes; beta-alanina y citrulina moderadas y prescindibles),
+  más un pre-entreno natural. Sin estimulantes.
+- **Sueño** — calculadora de hora de dormir (ciclos de ~90 min como heurístico
+  declarado; el óptimo marcado son 7-8 h, NO 9) + recomendaciones con evidencia.
+- **FODMAP** — protocolo de 3 etapas para SII: listas, menú de 7 días y calendario
+  de reintroducción; `datos/fodmap.js`.
+- **Tiroides** — hipotiroidismo: levotiroxina, dieta/yodo, estilo de vida.
+  Educativo, sin dosis; `datos/tiroides.js`.
+- **Papers** — toda la bibliografía citada agrupada por sección; `datos/papers.js`.
+  Al añadir evidencia en cualquier página, agrégala también aquí.
+
+Datos clave:
+- `datos/alimentos.js`: base POR RACIÓN según la Guía de Alimentos IMSS (macros =
+  promedio del grupo de equivalentes) + marcas comerciales por etiqueta; micros
+  aproximados (USDA). 11 micros por alimento (magnesio, zinc y folato se fusionan
+  desde MICROS_EXTRA al final del archivo). RANGOS_MICROS con dirección
+  (min = no bajar; sodio max = no pasar).
+- `datos/perfil.js`: meta kcal/macros con Mifflin-St Jeor × factor de actividad ×
+  ajuste por objetivo (mismos parámetros que la app).
+- `datos/recetas.js`: ingredientes = [idAlimento, raciones] → kcal/macros/micros
+  CALCULADOS con calcularReceta(); nada de números a mano. TOPES_GRUPO limita las
+  raciones al escalar (leguminosas 2.5, cereales 3, origen animal 6…) para que no
+  salgan porciones absurdas; por eso el factor hacia la meta se busca por
+  BÚSQUEDA BINARIA (la relación ya no es lineal). ENSALADAS = 5 ensaladas crudas
+  que rotan por semana; es la garantía de micros.
+- Alimentos propios: se capturan POR 100 g (como la etiqueta NOM-051) + gramos de
+  la porción; se convierten al guardar.
 
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto
@@ -132,27 +163,38 @@ curl necesitan `--ssl-no-revoke` en esta red.
   en Android 12+); barras desde cero para magnitudes, líneas para niveles/medidas.
 - minSdk 26, targetSdk 35. Sin Hilt, sin APIs en vivo.
 
-## Sitio web (`web/`)
-React 19 + Vite, 100% estático (HashRouter, base './'), datos en localStorage.
-`npm run dev` en web/ (o preview "bodymetria-web" del launch.json). Páginas:
-- Inicio (descarga del APK — copiar app-debug.apk a web/public/bodymetria.apk
-  al desplegar; está gitignoreado), Alimentos, Recetas, Micros, Suplementos, Sueño.
-- `datos/alimentos.js`: base POR RACIÓN según la Guía de Alimentos IMSS
-  (macros = promedio del grupo de equivalentes) + marcas comerciales por
-  etiqueta; micros aproximados (USDA) por ración. RANGOS_MICROS con dirección
-  (min = no bajar; sodio max = no pasar).
-- `datos/perfil.js`: meta kcal/macros con Mifflin-St Jeor × factor de actividad
-  × ajuste por objetivo (mismos parámetros que la app).
-- `datos/recetas.js`: ingredientes = [idAlimento, raciones] → kcal/macros/micros
-  CALCULADOS con calcularReceta(); ENSALADA cruda diaria fija (garantía de
-  micros). El menú semanal rota solo (semilla = semana ISO) y escala porciones
-  ×1..×2.5 hacia la meta del perfil.
-- Alimentos propios: se capturan POR 100 g (como la etiqueta NOM-051) + gramos
-  de la porción; se convierten al guardar.
-
 ## Pendiente (fase 2)
-- Health Connect (sueño/peso/ejercicio automáticos) — esperando a que tenga
-  sentido con hardware del usuario (smartwatch/banda).
-- Publicación en Play Store.
-(Ya hechos: UsageStatsManager, correlaciones, rangos en gráficas, editar
-sesiones + rutinas.)
+- **Mi Band 9 → Health Connect.** El usuario YA tiene la banda (julio 2026). Ruta:
+  Mi Band 9 → app Mi Fitness → Health Connect → Bodymetria lee. Bloqueado hasta que
+  el usuario confirme que su Mi Fitness expone Health Connect (Perfil → Ajustes →
+  Health Connect). Implementación prevista: `androidx.health.connect:connect-client`,
+  permisos de LECTURA de sueño, ejercicio, pasos, peso y FC, y una pantalla
+  "Importar del reloj" que rellene Sueño/Ejercicio/Composición respetando la regla
+  de vista previa antes de escribir. OJO: leer datos de salud exige un formulario
+  de declaración extra en Play Store.
+- **Publicación en Play Store**: keystore de release (guardarla como oro), AAB,
+  ficha, política de privacidad y prueba cerrada de 14 días con ~12 testers.
+- **Análisis de mercado para iOS** antes de decidir (Compose Multiplatform
+  reutilizaría casi todo). Por ahora el foco es Android.
+
+## Fuera del repo (en evaluación)
+- **"Blindaje Articular"**: sesión semanal de 50 min de prehabilitación (tendones
+  de codo/muñeca, manguito rotador, aductores, isquios, rotuliano, tibial y pies),
+  con 4 semanas que rotan, reglas de dolor (≤4/10 y regla de 24 h) y los 46
+  ejercicios ANIMADOS. Vive como artifact privado mientras el usuario lo prueba;
+  **NO está en el repo ni desplegado** por decisión suya. Si funciona, entra como
+  rutina de la página Entrenos.
+  El motor de animación es reutilizable: esqueleto de ángulos ABSOLUTOS con huesos
+  de longitud fija (el cuerpo nunca se estira) + un rig "linea" para primeros planos
+  de mano/pie/cuello; el encuadre se calcula solo desde las poses. Cuidado al
+  portarlo: interpolar arreglos de CUALQUIER longitud, no solo pares [x,y] — los
+  círculos son [x,y,radio] y truncarlos genera NaN que rompe todo.
+
+## Decisiones de contenido (no revertir sin avisar)
+- Nada de comida basura en el catálogo de Alimentos; en Micros las marcas solo
+  aparecen en el sodio.
+- La evidencia se enuncia como ASOCIACIÓN en poblaciones, nunca como promesa; cada
+  afirmación lleva su paper y termina en la página Papers.
+- Se dice lo incómodo: la vitamina D casi no viene de la comida (sale "del sol"),
+  el ciclo de 90 min de sueño es un heurístico, y una sesión semanal es blindaje,
+  no rehabilitación (una tendinopatía activa necesita 2-3×/semana × 12 semanas).
