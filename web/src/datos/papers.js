@@ -82,6 +82,16 @@ export const PAPERS = [
     ],
   },
   {
+    seccion: 'Prehabilitación (Blindaje Articular)',
+    refs: [
+      { ref: 'Lauersen JB, et al. Br J Sports Med, 2018.', tema: 'El entrenamiento de fuerza reduce alrededor de un tercio las lesiones deportivas; el estiramiento solo, no.' },
+      { ref: 'van Dyk N, et al. Br J Sports Med, 2019.', tema: 'El curl nórdico redujo a la mitad las lesiones de isquios (meta-análisis).' },
+      { ref: 'Harøy J, et al. Br J Sports Med, 2019.', tema: 'El protocolo Copenhagen redujo un 41 % los problemas de ingle en futbolistas.' },
+      { ref: 'Tyler TF, et al. J Shoulder Elbow Surg, 2010.', tema: 'Excéntrico de extensores de muñeca con barra de goma (Tyler twist) para el codo de tenista.' },
+      { ref: 'Bohm S, Mersmann F, Arampatzis A. Sports Med Open, 2015.', tema: 'El tendón se adapta a carga alta sostenida en el tiempo, no a repeticiones rápidas.' },
+    ],
+  },
+  {
     seccion: 'Hipotiroidismo',
     refs: [
       { ref: 'Jonklaas J, et al. (ATA). Thyroid, 2014.', tema: 'Guía de tratamiento del hipotiroidismo con levotiroxina.' },

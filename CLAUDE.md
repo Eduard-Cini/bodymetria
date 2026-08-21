@@ -79,7 +79,7 @@ Desplegado en Netlify conectado al repo GitHub `Eduard-Cini/bodymetria`: cada pu
 a `main` republica solo. `netlify.toml` va en la RAÍZ (Netlify lo lee de ahí) con
 base = "web", publish = "dist" (relativo a base), command = "npm run build".
 
-12 páginas (rutas en `src/App.jsx`):
+13 páginas (rutas en `src/App.jsx`):
 - **Inicio** — descarga del APK. NO se sirve desde Netlify: vive como *release* de
   GitHub y el botón apunta a `releases/latest/download/bodymetria.apk`
   (`web/public/bodymetria.apk` está gitignoreado). Subirlo con `scripts/release.ps1`.
@@ -96,6 +96,11 @@ base = "web", publish = "dist" (relativo a base), command = "npm run build".
   con mes de inicio elegible; `datos/rutinas.js`. Cada día se guarda como rutina en la app.
 - **Tendones** — carga de tendones, 4 fases isométrico→HSR y protocolos por
   tendinopatía rotuliana/aquíleo/codo/hombro/muñeca; `datos/tendones.js`.
+- **Blindaje** — "Blindaje Articular": sesión semanal de 50 min de prehabilitación
+  (codo/muñeca, manguito rotador, aductores, isquios, rotuliano, tibial y pies), con
+  las reglas de dolor (≤4/10 y regla de 24 h), 4 semanas que rotan (selector A-D) y
+  los 46 ejercicios ANIMADOS; `datos/blindaje.js` (semanas + CUES, una clave por
+  ejercicio compartida con el motor) y `componentes/AnimacionEjercicio.jsx`.
 - **Suplementos** — naturales por objetivo y sintéticos con GRADO de evidencia
   (creatina y proteína fuertes; beta-alanina y citrulina moderadas y prescindibles),
   más un pre-entreno natural. Sin estimulantes.
@@ -124,6 +129,14 @@ Datos clave:
   que rotan por semana; es la garantía de micros.
 - Alimentos propios: se capturan POR 100 g (como la etiqueta NOM-051) + gramos de
   la porción; se convierten al guardar.
+- `datos/animaciones.js`: motor de las animaciones de Blindaje (46 ejercicios) y
+  reutilizable en cualquier página. Esqueleto de ángulos ABSOLUTOS con huesos de
+  longitud fija (el cuerpo nunca se estira) + un rig "linea" para primeros planos
+  de mano/pie/cuello; el encuadre lo calcula `caja()` solo desde las poses. CUIDADO
+  al tocar `mezclar()`: interpola arreglos de CUALQUIER longitud, no solo pares
+  [x,y] — los círculos son [x,y,radio] y truncarlos genera NaN que rompe todo.
+  El pintado NO pasa por React: un solo requestAnimationFrame compartido mueve las
+  animaciones a la vista (IntersectionObserver) y respeta prefers-reduced-motion.
 
 ## Arquitectura
 - `app/src/main/java/com/vidasana/datos/` — Room: `Entidades.kt` (fechas como texto
@@ -176,19 +189,6 @@ curl necesitan `--ssl-no-revoke` en esta red.
   ficha, política de privacidad y prueba cerrada de 14 días con ~12 testers.
 - **Análisis de mercado para iOS** antes de decidir (Compose Multiplatform
   reutilizaría casi todo). Por ahora el foco es Android.
-
-## Fuera del repo (en evaluación)
-- **"Blindaje Articular"**: sesión semanal de 50 min de prehabilitación (tendones
-  de codo/muñeca, manguito rotador, aductores, isquios, rotuliano, tibial y pies),
-  con 4 semanas que rotan, reglas de dolor (≤4/10 y regla de 24 h) y los 46
-  ejercicios ANIMADOS. Vive como artifact privado mientras el usuario lo prueba;
-  **NO está en el repo ni desplegado** por decisión suya. Si funciona, entra como
-  rutina de la página Entrenos.
-  El motor de animación es reutilizable: esqueleto de ángulos ABSOLUTOS con huesos
-  de longitud fija (el cuerpo nunca se estira) + un rig "linea" para primeros planos
-  de mano/pie/cuello; el encuadre se calcula solo desde las poses. Cuidado al
-  portarlo: interpolar arreglos de CUALQUIER longitud, no solo pares [x,y] — los
-  círculos son [x,y,radio] y truncarlos genera NaN que rompe todo.
 
 ## Decisiones de contenido (no revertir sin avisar)
 - Nada de comida basura en el catálogo de Alimentos; en Micros las marcas solo

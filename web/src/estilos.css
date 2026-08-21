@@ -120,3 +120,116 @@ footer {
   font-size: 0.85rem;
   color: var(--marron-medio);
 }
+
+/* ── Blindaje Articular: filas de ejercicio con su animación ── */
+.regla {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 0.7rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--borde);
+  font-size: 0.95rem;
+}
+.regla:last-child { border-bottom: 0; }
+.regla-n {
+  font-weight: 700;
+  color: var(--acento);
+  font-variant-numeric: tabular-nums;
+}
+
+.bloque-tiempo {
+  display: flex;
+  height: 2.4rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.6rem 0 0.3rem;
+}
+.bloque-tiempo div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--acento);
+  background: var(--crema-suave);
+  border-right: 1px solid var(--borde);
+  font-variant-numeric: tabular-nums;
+}
+.bloque-tiempo div:last-child { border-right: 0; }
+.bloque-tiempo div.fuerte { background: var(--acento); color: var(--blanco); }
+
+.bq { margin-bottom: 1rem; }
+.bq:last-child { margin-bottom: 0; }
+.bq-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--marron-medio);
+}
+.bq-cab .bq-i { color: var(--acento); }
+.bq-cab .bq-t { margin-left: auto; font-weight: 400; text-transform: none; }
+
+.ejs { list-style: none; margin: 0; padding: 0; }
+.ejs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.7rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--borde);
+}
+.ejs li:last-child { border-bottom: 0; }
+.ej-txt { flex: 1; min-width: 8rem; display: flex; flex-direction: column; gap: 0.1rem; }
+.ej-txt .rx { font-size: 0.82rem; color: var(--marron-medio); font-variant-numeric: tabular-nums; }
+.ej-btn {
+  font: inherit;
+  color: var(--marron);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  align-self: flex-start;
+  border-bottom: 1px dotted var(--marron-medio);
+  line-height: 1.45;
+}
+.ej-btn:hover { color: var(--acento); border-bottom-color: var(--acento); }
+.ej-btn .chev { font-weight: 700; color: var(--acento); }
+.anim-nota { font-size: 0.72rem; color: var(--marron-medio); line-height: 1.35; }
+.cue-inline {
+  flex-basis: 100%;
+  margin: 0.35rem 0 0.1rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--crema-suave);
+  border-left: 3px solid var(--acento);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+}
+
+.anim {
+  display: block;
+  flex: 0 0 5.4rem;
+  width: 5.4rem;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+.anim.grande { flex: none; width: 100%; max-width: 15rem; margin: 0.4rem 0 0.5rem; }
+.anim .suelo, .anim .prop { stroke: var(--marron-medio); stroke-width: 1.6; opacity: 0.45; }
+.anim .caja { fill: var(--crema-suave); stroke: var(--marron-medio); stroke-width: 1.2; }
+.anim .hueso { stroke: var(--acento); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.anim .tenue { stroke: var(--marron-medio); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.4; fill: none; }
+.anim .cabeza { fill: var(--acento); }
+.anim .disco { fill: var(--frijol); }
+.anim .banda { stroke: var(--frijol); stroke-width: 2.2; stroke-dasharray: 5 3; fill: none; }
+.anim .guia { stroke: var(--frijol); stroke-width: 1.6; stroke-dasharray: 4 3; opacity: 0.9; }
